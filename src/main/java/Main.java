@@ -1,66 +1,68 @@
-import org.hashids.Hashids;
 import java.sql.*;
 import static spark.Spark.*;
 
 public class Main {
     public static void main(String[] args) {
-
-        BancoDeDados bd = new BancoDeDados();
-        Hashids hashids = new Hashids();
-
-
+    	
+    	
+    	port(8080);
+			
+        BancoDeDados bd = new BancoDeDados(); 
+    	
+        CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
+        
+         
         staticFiles.location("/public");
 
         after((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Methods", "GET");
+            return;
         });
 
-//                  GERA ID
+
+//    	Cria uma posição no banco de dados e retorna uma hash do respectivo id 
+        
         get("/api/sketch", (req, res) -> {
-            Connection connection = bd.criarConexao();
+        	Connection connection = bd.criarConexao();
             Statement statement = connection.createStatement();
+            
             statement.execute("INSERT INTO webcal (pontos) VALUES (null);", Statement.RETURN_GENERATED_KEYS);
             ResultSet generatedKeys = statement.getGeneratedKeys();
             generatedKeys.next();
+            
             int idGerado = generatedKeys.getInt(1);
-
+            Calibracao novoCalibracao  = new Calibracao();
+            novoCalibracao.setId(idGerado);
+            
             statement.close();
             bd.fecharConexao(connection);
-
-            return hashids.encode(idGerado);
+            return novoCalibracao.getHashid();
         });
-
-
-//                  MANDA HASH PARA FRONT
+        
+        
+//      Recebe hash na rota e retorna os pontos da calibração
+       
         get("/api/sketch/:hash", (request, response) -> {
+        	System.out.println("tentando pegar pontos");
             String hashid = request.params(":hash");
-            CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
             Calibracao cal = calibracaoDAO.getCalibracao(hashid);
             return cal.toString();
         });
+        
+        
 
-//                  RECEBE 02 PARAMETROS: UM NA ROTA(HASH) E OUTRO NO BODY(PONTOS)
+//    	recebe hash na rota e pontos no body e atualiza os valores
+        
         post("/api/sketch/:hash", (request, response) -> {
-            String jsonPontos = request.body();
-            String hash = request.params(":hash");
-            System.out.println(jsonPontos);
-
-            // decodificar o id
-            long[] decodes = hashids.decode(hash);
-            long id = decodes[0];
-
-            String update = "UPDATE webcal SET pontos = ?, data_de_modificacao = ? WHERE id = ? ";
-            Connection connection = bd.criarConexao();
-            PreparedStatement preparedStatement = connection.prepareStatement(update);
-            preparedStatement.setString(1, jsonPontos);
-            preparedStatement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-            preparedStatement.setLong(3, id);
-            preparedStatement.executeUpdate();
-            boolean atualizouAlgo = preparedStatement.getUpdateCount() > 0;
-            preparedStatement.close();
-            bd.fecharConexao(connection);
-            return atualizouAlgo ? "Ok" : "Erro";
+            	
+        	Calibracao novaCalibracao  = new Calibracao();
+            novaCalibracao.setHashid(request.params(":hash"));
+	        novaCalibracao.setPontos(request.body());
+	        Boolean resultado = calibracaoDAO
+	        		.atualizarCalibracao(novaCalibracao);
+	        
+	        return resultado ? "Ok" : "Erro";
         });
     }
 }

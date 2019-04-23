@@ -52,6 +52,6 @@ public class Calibracao {
 
     @Override
     public String toString() {
-        return pontos == null ? "[]" : pontos;
+        return pontos == "null" ? "[]" : this.pontos;
     }
 }
