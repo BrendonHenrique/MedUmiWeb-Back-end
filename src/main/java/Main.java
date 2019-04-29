@@ -5,12 +5,10 @@ public class Main {
     public static void main(String[] args) {
     	
     	
-    	port(8080);
+    	port(8081);
 			
         BancoDeDados bd = new BancoDeDados(); 
-    	
-        CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
-        
+    	CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
          
         staticFiles.location("/public");
 
@@ -49,8 +47,7 @@ public class Main {
             Calibracao cal = calibracaoDAO.getCalibracao(hashid);
             return cal.toString();
         });
-        
-        
+                
 
 //    	recebe hash na rota e pontos no body e atualiza os valores
         
@@ -62,7 +59,7 @@ public class Main {
 	        Boolean resultado = calibracaoDAO
 	        		.atualizarCalibracao(novaCalibracao);
 	        
-	        return resultado ? "Ok" : "Erro";
+	        return resultado ? "atualizado" : "naoatualizado";
         });
     }
 }
