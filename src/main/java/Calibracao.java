@@ -48,7 +48,6 @@ public class Calibracao {
 
     public void setHashid(String hashid) {
         this.id = CRIADOR_DE_HASHID.decode(hashid)[0];
-
     }
 
     @Override

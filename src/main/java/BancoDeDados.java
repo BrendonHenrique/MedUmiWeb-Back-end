@@ -10,8 +10,7 @@ public class BancoDeDados {
         Connection conn = null;
         conn = DriverManager
         		.getConnection("jdbc:mysql://localhost:3306/pontos_calibracao",
-        				"root", "1234");
-        
+				"root", "1234");
         return conn;
     }
 

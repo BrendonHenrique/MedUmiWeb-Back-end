@@ -34,12 +34,10 @@ public class CalibracaoDAO {
             dataCriacao = rs.getDate(3);
             dataModificacao = rs.getDate(4);
             preparedStatement.close();
-            
             cal.setPontos(pontos);
             cal.setDataDeCriacao(dataCriacao);
             cal.setDataDeModificacao(dataModificacao);
  
-
         	return cal;
         } catch (SQLException e) {
             e.printStackTrace();

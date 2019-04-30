@@ -1,56 +1,64 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-  <modelVersion>4.0.0</modelVersion>
-  <packaging>jar</packaging>
-
-  <name>WebCalMedUmi</name>
-  <groupId>br.com.garten.webcalmedumi</groupId>
-  <artifactId>WebCalMedUmi</artifactId>
-  <version>3.0</version>
-
-  <build>
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>8</source>
-          <target>8</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-  <dependencies>
-    <!--dependency>
-      <groupId>br.com.garten.webcalmedumi</groupId>
-      <artifactId>[the artifact id of the block to be mounted]</artifactId>
-      <version>3.0</version>
-    </dependency-->
-    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.8.0-beta4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sparkjava</groupId>
-      <artifactId>spark-core</artifactId>
-      <version>2.8.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hashids</groupId>
-      <artifactId>hashids</artifactId>
-      <version>1.0.3</version>
-    </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.47</version>
-    </dependency>
-  </dependencies>
-
-</project>
+	<?xml version="1.0" encoding="UTF-8"?>
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	  <modelVersion>4.0.0</modelVersion>
+	  <packaging>jar</packaging>
+	
+	  <name>WebCalMedUmi</name>
+	  <groupId>br.com.garten.webcalmedumi</groupId>
+	  <artifactId>WebCalMedUmi</artifactId>
+	  <version>3.0</version>
+	
+	  <build>
+	    <plugins>
+	
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <configuration>
+	          <source>8</source>
+	          <target>8</target>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+	  </build>
+	
+	  <dependencies> 
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>2.2.6</version>
+		</dependency> 
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>jackson-coreutils</artifactId>
+			<version>1.8</version>
+		</dependency> 
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>json-schema-core</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-simple</artifactId>
+	      <version>1.8.0-beta4</version>
+	    </dependency> 
+	    <dependency>
+	      <groupId>com.sparkjava</groupId>
+	      <artifactId>spark-core</artifactId>
+	      <version>2.8.0</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.hashids</groupId>
+	      <artifactId>hashids</artifactId>
+	      <version>1.0.3</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>mysql</groupId>
+	      <artifactId>mysql-connector-java</artifactId>
+	      <version>5.1.47</version>
+	    </dependency>
+	  </dependencies>
+	
+	</project>
