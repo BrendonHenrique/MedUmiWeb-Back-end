@@ -40,7 +40,7 @@ public class Main {
             return;
         }); 
         
-        get("/api/sketch", (req, res) -> {
+        get("/api/sketch/", (req, res) -> {
         	
         	Connection connection = bd.criarConexao();
             Statement statement = connection.createStatement();
