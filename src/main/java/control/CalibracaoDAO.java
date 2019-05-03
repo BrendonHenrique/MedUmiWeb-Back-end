@@ -1,4 +1,8 @@
+package control;
 import java.sql.*;
+
+import model.BancoDeDados;
+import model.Calibracao;
 
 public class CalibracaoDAO {
     private Connection con = null;

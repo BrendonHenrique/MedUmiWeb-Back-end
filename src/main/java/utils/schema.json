@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "pontos",
+    "description": "coordenadas de calibração",
+    "type": "array",
+
+    "items": {
+        "type": "object",
+        "required":["x","y","xReajustado","habilitado"],
+        "properties": {
+            "x": {
+                "description": "Coordenada representada pelas amostras da garten",
+                "type": "string"
+            },
+            "y": {
+                "description": "Coordenada representada pelas amostras do laboratório",
+                "type": "string"
+            },
+            "habilitado": {
+                "description": "Booleano responsável por mostrar ou não no gráfico",
+                "type": "boolean"
+            },
+            "xReajustado": {
+                "description": "Coordenada das amostras garten reajustadas utilizando a equação inversa",
+                "type": "number"
+            }
+        }
+    }
+}

@@ -1,3 +1,4 @@
+package model;
 import org.hashids.Hashids;
 
 import java.util.Date;

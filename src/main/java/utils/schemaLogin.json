@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Login",
+    "description": "Ĩnformações de login do usuário",
+    "type": "object",
+    "required": ["login", "senha"],
+    "properties": {
+        "login": {
+            "description": "Login do usuário",
+            "type": "string"
+        },
+        "senha": {
+            "description": "Senha do usuário",
+            "type": "string"
+        }
+    }
+}
