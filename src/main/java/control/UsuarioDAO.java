@@ -24,13 +24,21 @@ public class UsuarioDAO {
 		}
 	}
 
+	public void fecharConexao() {
+		bd.fecharConexao(con);
+	}
+
 	public Usuario getUsuario(String login, String senha) {
 		try {
 			PreparedStatement preparedStatement = con.prepareStatement(selectId);
 			preparedStatement.setString(1, login);
 			preparedStatement.setString(2, senha);
 			ResultSet rs = preparedStatement.executeQuery();
+		
 			if (!rs.isBeforeFirst()) {
+				this.fecharConexao();
+				preparedStatement.close();
+				
 				return null;
 			} else {
 				rs.next();
@@ -42,6 +50,9 @@ public class UsuarioDAO {
 				Usuario usuarioEncontrado = new Usuario(resultedSetId, resultedSetNome, resultedSetSenha,
 						resultedSetLogin, resultedSetUsuarioAdmin);
 
+				this.fecharConexao();
+				preparedStatement.close();
+				
 				return usuarioEncontrado;
 			}
 		} catch (SQLException error) {
@@ -49,6 +60,5 @@ public class UsuarioDAO {
 		}
 		return null;
 	}
-	
 
 }

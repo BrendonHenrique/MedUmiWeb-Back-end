@@ -42,7 +42,7 @@ public class Main {
 
 		BancoDeDados bd = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
-		UsuarioDAO usuarioDAO = new UsuarioDAO();
+	
 
 		staticFiles.location("/public");
 
@@ -54,24 +54,27 @@ public class Main {
 
 		post("/client/login", (request, response) -> {
 			response.type("application/json");
+			 	
 			loginJsonSchema loginSchema = new loginJsonSchema();
-			String result;
+			boolean result;
 
 			if (ValidationUtils.isJsonValid(loginSchema.getSchema(), request.body())) {
+				UsuarioDAO usuarioDAO = new UsuarioDAO();
 				Gson gson = new Gson();
 				Usuario setUserWithOnlyLoginAndPassword = gson.fromJson(request.body(), Usuario.class);
-				Usuario user = usuarioDAO.getUsuario(setUserWithOnlyLoginAndPassword.getLogin(), 
+				Usuario user = usuarioDAO.getUsuario(setUserWithOnlyLoginAndPassword.getLogin(),
 						setUserWithOnlyLoginAndPassword.getSenha());
-				
-				if(user != null) {
-					result = "usuario encontrado";
-				}else {
-					result = "usuario não encontrado";
+
+				if (user != null) {
+					result = true;
+				} else {
+					result = false;
 				}
-				
-			} else { 
-				result = "JSON Inválido";
+
+			} else {
+				result = false;
 			}
+
 
 			return result;
 		});
