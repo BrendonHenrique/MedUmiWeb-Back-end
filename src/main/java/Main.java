@@ -56,7 +56,7 @@ public class Main {
 			response.type("application/json");
 			 	
 			loginJsonSchema loginSchema = new loginJsonSchema();
-			boolean result;
+			String result;
 
 			if (ValidationUtils.isJsonValid(loginSchema.getSchema(), request.body())) {
 				UsuarioDAO usuarioDAO = new UsuarioDAO();
@@ -66,13 +66,20 @@ public class Main {
 						setUserWithOnlyLoginAndPassword.getSenha());
 
 				if (user != null) {
-					result = true;
+					result = "Login e senha corretos";
 				} else {
-					result = false;
+					//Entra em usuarioDAO com setUserWithOnlyLoginAndPassword 
+					//Primeiro verifica se existe login no banco de dados e retorna true ou false
+						//Se retornar true , então testa a senha , se retornar false , envia -> senha incorreta
+						//Se retornar false , então login está incorreto					
+					
+					System.out.println("Usuario nao encontrado , vamos verificar login e a senha");
+					
+					result = "Login ou senha incorretos";
 				}
 
 			} else {
-				result = false;
+				result = "Json incorreto";
 			}
 
 
