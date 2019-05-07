@@ -11,48 +11,61 @@ public class UsuarioDAO {
 
 	private Connection con = null;
 	private BancoDeDados bd = null;
-	String selectId = "SELECT id_usuario,nome,senha,login,UsuarioAdmin FROM usuarios WHERE login = ? AND senha = ?";
+	String searchForAllFields = "SELECT id_usuario,nome,senha,login,UsuarioAdmin FROM usuarios";
+	String searchWithLoginAndPassword = searchForAllFields + " WHERE login = ? AND senha = ?";
+	String searchWithLogin = searchForAllFields + " WHERE login = ?";
+	PreparedStatement preparedStatement;
 
 	public UsuarioDAO() {
 		this.bd = new BancoDeDados();
 		try {
 			this.con = bd.criarConexao();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException | SQLException error) {
+			System.out.println(error.getMessage());
 		}
 	}
 
 	public void fecharConexao() {
 		bd.fecharConexao(con);
+		try {
+			preparedStatement.close();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public String hasThisLogin(String login) {
+		try {
+			preparedStatement = con.prepareStatement(searchWithLogin);
+			preparedStatement.setString(1, login);
+			ResultSet result = preparedStatement.executeQuery();
+
+			if (!result.isBeforeFirst()) {
+				return "Login incorreto";
+			} else {
+				return "Senha incorreta";
+			}
+		} catch (SQLException error) {
+			return error.getMessage();
+		}
 	}
 
 	public Usuario getUsuario(String login, String senha) {
 		try {
-			PreparedStatement preparedStatement = con.prepareStatement(selectId);
+			preparedStatement = con.prepareStatement(searchWithLoginAndPassword);
 			preparedStatement.setString(1, login);
 			preparedStatement.setString(2, senha);
-			ResultSet rs = preparedStatement.executeQuery();
-		
-			if (!rs.isBeforeFirst()) {
-				this.fecharConexao();
-				preparedStatement.close();
-				
-				return null;
-			} else {
-				rs.next();
-				long resultedSetId = rs.getLong(1);
-				String resultedSetNome = rs.getString(2);
-				String resultedSetSenha = rs.getString(3);
-				String resultedSetLogin = rs.getString(4);
-				boolean resultedSetUsuarioAdmin = rs.getBoolean(5);
-				Usuario usuarioEncontrado = new Usuario(resultedSetId, resultedSetNome, resultedSetSenha,
-						resultedSetLogin, resultedSetUsuarioAdmin);
+			ResultSet result = preparedStatement.executeQuery();
 
-				this.fecharConexao();
-				preparedStatement.close();
-				
+			if (!result.isBeforeFirst()) {
+				return new Usuario();
+			} else {
+
+				result.next();
+				Usuario usuarioEncontrado = new Usuario().setId_fk_usuario(result.getLong(1))
+						.setNome(result.getString(2)).setSenha(result.getString(3)).setLogin(result.getString(4))
+						.setUsuarioAdmin(result.getBoolean(5));
+
 				return usuarioEncontrado;
 			}
 		} catch (SQLException error) {

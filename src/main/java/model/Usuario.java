@@ -8,46 +8,45 @@ public class Usuario {
 	private String login;
 	private boolean UsuarioAdmin;
 	
-	public Usuario(long id_usuario, String nome, String senha, String login, boolean UsuarioAdmin) {
-		super();
-		this.id_fk_usuario = id_usuario;
-		this.nome = nome;
-		this.senha = senha;
-		this.login = login;
-		this.UsuarioAdmin = UsuarioAdmin;
+	public Usuario() { 
 	}
 	
 	public boolean getUsuarioAdmin() {
 		return this.UsuarioAdmin;
 	}
 	
-	public void setUsuarioAdmin(boolean UsuarioAdmin) {
+	public Usuario setUsuarioAdmin(boolean UsuarioAdmin) {
 		this.UsuarioAdmin = UsuarioAdmin;
+		return this;
 	}
 	
 	public long getId_fk_usuario() {
 		return id_fk_usuario;
 	}
-	public void setId_fk_usuario(long id_usuario) {
+	public Usuario setId_fk_usuario(long id_usuario) {
 		this.id_fk_usuario = id_usuario;
+		return this;
 	}
 	public String getNome() {
 		return nome;
 	}
-	public void setNome(String nome) {
+	public Usuario setNome(String nome) {
 		this.nome = nome;
+		return this;
 	}
 	public String getSenha() {
 		return senha;
 	}
-	public void setSenha(String senha) {
+	public Usuario setSenha(String senha) {
 		this.senha = senha;
+		return this;
 	}
 	public String getLogin() {
 		return login;
 	}
-	public void setLogin(String login) {
+	public Usuario setLogin(String login) {
 		this.login = login;
+		return this;
 	}
 	
 	

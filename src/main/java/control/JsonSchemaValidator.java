@@ -14,7 +14,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
  
 // Class responsável pela validação do Schema de pontos
 
-public class ValidationUtils {
+public class JsonSchemaValidator {
     
     public static final String JSON_V4_SCHEMA_IDENTIFIER = "http://json-schema.org/draft-04/schema#";
     public static final String JSON_SCHEMA_IDENTIFIER_ELEMENT = "$schema";

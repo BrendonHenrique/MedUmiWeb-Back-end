@@ -1,18 +1,16 @@
 import java.io.IOException;
 import java.sql.*;
-
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-
 import control.CalibracaoDAO;
 import control.UsuarioDAO;
-import control.ValidationUtils;
+import control.JsonSchemaValidator;
+import control.TokensControl;
 import model.BancoDeDados;
 import model.Calibracao;
 import model.Usuario;
 import model.loginJsonSchema;
 import model.pontosJsonSchema;
 import com.google.gson.Gson;
-
 import static spark.Spark.*;
 
 /**
@@ -39,10 +37,17 @@ public class Main {
 	public static void main(String[] args) throws ProcessingException, IOException {
 
 		port(8081);
-
+		
+		
+		TokensControl gerador =  new TokensControl();
+		String token = gerador.criarJWT("1", "garten", "{nome:brendon}", 1557261919);
+		gerador.parseJWT(token);
+		System.out.println(token);
+		
+		
+		
 		BancoDeDados bd = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
-	
 
 		staticFiles.location("/public");
 
@@ -53,49 +58,47 @@ public class Main {
 		});
 
 		post("/client/login", (request, response) -> {
-			response.type("application/json");
-			 	
-			loginJsonSchema loginSchema = new loginJsonSchema();
-			String result;
 
-			if (ValidationUtils.isJsonValid(loginSchema.getSchema(), request.body())) {
-				UsuarioDAO usuarioDAO = new UsuarioDAO();
+			response.type("application/json");
+			loginJsonSchema loginSchema = new loginJsonSchema();
+			UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+			if (JsonSchemaValidator.isJsonValid(loginSchema.getSchema(), request.body())) {
 				Gson gson = new Gson();
 				Usuario setUserWithOnlyLoginAndPassword = gson.fromJson(request.body(), Usuario.class);
+
 				Usuario user = usuarioDAO.getUsuario(setUserWithOnlyLoginAndPassword.getLogin(),
 						setUserWithOnlyLoginAndPassword.getSenha());
+				
+				if (user.getLogin() == null && user.getSenha() == null) {
 
-				if (user != null) {
-					result = "Login e senha corretos";
-				} else {
-					//Entra em usuarioDAO com setUserWithOnlyLoginAndPassword 
-					//Primeiro verifica se existe login no banco de dados e retorna true ou false
-						//Se retornar true , então testa a senha , se retornar false , envia -> senha incorreta
-						//Se retornar false , então login está incorreto					
-					
-					System.out.println("Usuario nao encontrado , vamos verificar login e a senha");
-					
-					result = "Login ou senha incorretos";
-				}
-
+					return usuarioDAO.hasThisLogin(setUserWithOnlyLoginAndPassword.getLogin());
+				
+				}else if(user.getLogin().equals(setUserWithOnlyLoginAndPassword.getLogin())
+						&& user.getSenha().equals(setUserWithOnlyLoginAndPassword.getSenha())) {
+				
+					return "Login e senha corretos";
+				} 
 			} else {
-				result = "Json incorreto";
+				return "Json incorreto";
 			}
-
-
-			return result;
+			
+			usuarioDAO.fecharConexao();
+			return request;
 		});
 
-		get("/api/sketch/", (req, res) -> {
+		get("/api/sketch", (req, res) -> {
 
 			Connection connection = bd.criarConexao();
 			Statement statement = connection.createStatement();
+			
 			statement.execute("INSERT INTO webcal (pontos) VALUES (null);", Statement.RETURN_GENERATED_KEYS);
 			ResultSet generatedKeys = statement.getGeneratedKeys();
 			generatedKeys.next();
 			int idGerado = generatedKeys.getInt(1);
 			Calibracao novoCalibracao = new Calibracao();
 			novoCalibracao.setId(idGerado);
+			
 			statement.close();
 			bd.fecharConexao(connection);
 			return novoCalibracao.getHashid();
@@ -112,7 +115,7 @@ public class Main {
 			pontosJsonSchema pontosSchema = new pontosJsonSchema();
 			Boolean resultado = false;
 
-			if (ValidationUtils.isJsonValid(pontosSchema.getSchema(), request.body())) {
+			if (JsonSchemaValidator.isJsonValid(pontosSchema.getSchema(), request.body())) {
 				Calibracao novaCalibracao = new Calibracao();
 				novaCalibracao.setHashid(request.params(":hash"));
 				novaCalibracao.setPontos(request.body());
