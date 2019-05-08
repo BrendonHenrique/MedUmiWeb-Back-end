@@ -2,29 +2,29 @@ package model;
 
 public class Usuario {
 	
-	private long id_fk_usuario;
+	private long idUsuario;
 	private String nome;
 	private String senha;
 	private String login;
-	private boolean UsuarioAdmin;
+	private int usuarioAdmin;
 	
 	public Usuario() { 
 	}
 	
-	public boolean getUsuarioAdmin() {
-		return this.UsuarioAdmin;
+	public int getUsuarioAdmin() {
+		return this.usuarioAdmin;
 	}
 	
-	public Usuario setUsuarioAdmin(boolean UsuarioAdmin) {
-		this.UsuarioAdmin = UsuarioAdmin;
+	public Usuario setUsuarioAdmin(int UsuarioAdmin) {
+		this.usuarioAdmin = UsuarioAdmin;
 		return this;
 	}
 	
-	public long getId_fk_usuario() {
-		return id_fk_usuario;
+	public long getidUsuario() {
+		return idUsuario;
 	}
-	public Usuario setId_fk_usuario(long id_usuario) {
-		this.id_fk_usuario = id_usuario;
+	public Usuario setidUsuario(long idUsuario) {
+		this.idUsuario = idUsuario;
 		return this;
 	}
 	public String getNome() {

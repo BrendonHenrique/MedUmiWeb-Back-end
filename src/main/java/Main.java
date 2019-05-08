@@ -9,7 +9,7 @@ import model.BancoDeDados;
 import model.Calibracao;
 import model.Usuario;
 import model.loginJsonSchema;
-import model.pontosJsonSchema;
+import model.pontosJsonSchema; 
 import com.google.gson.Gson;
 import static spark.Spark.*;
 
@@ -37,18 +37,8 @@ public class Main {
 	public static void main(String[] args) throws ProcessingException, IOException {
 
 		port(8081);
-		
-		
-		TokensControl gerador =  new TokensControl();
-		String token = gerador.criarJWT("1", "garten", "{nome:brendon}", 1557261919);
-		gerador.parseJWT(token);
-		System.out.println(token);
-		
-		
-		
 		BancoDeDados bd = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
-
 		staticFiles.location("/public");
 
 		after((request, response) -> {
@@ -58,26 +48,38 @@ public class Main {
 		});
 
 		post("/client/login", (request, response) -> {
-
+			
 			response.type("application/json");
 			loginJsonSchema loginSchema = new loginJsonSchema();
 			UsuarioDAO usuarioDAO = new UsuarioDAO();
 
 			if (JsonSchemaValidator.isJsonValid(loginSchema.getSchema(), request.body())) {
 				Gson gson = new Gson();
-				Usuario setUserWithOnlyLoginAndPassword = gson.fromJson(request.body(), Usuario.class);
+				Usuario userWithOnlyLoginAndPassword = gson.fromJson(request.body(), Usuario.class);
 
-				Usuario user = usuarioDAO.getUsuario(setUserWithOnlyLoginAndPassword.getLogin(),
-						setUserWithOnlyLoginAndPassword.getSenha());
+				Usuario user = usuarioDAO.getUsuario(userWithOnlyLoginAndPassword.getLogin(),
+						userWithOnlyLoginAndPassword.getSenha());
 				
 				if (user.getLogin() == null && user.getSenha() == null) {
 
-					return usuarioDAO.hasThisLogin(setUserWithOnlyLoginAndPassword.getLogin());
+					return usuarioDAO.hasThisLogin(userWithOnlyLoginAndPassword.getLogin());
 				
-				}else if(user.getLogin().equals(setUserWithOnlyLoginAndPassword.getLogin())
-						&& user.getSenha().equals(setUserWithOnlyLoginAndPassword.getSenha())) {
-				
-					return "Login e senha corretos";
+				}else if(user.getLogin().equals(userWithOnlyLoginAndPassword.getLogin())
+						&& user.getSenha().equals(userWithOnlyLoginAndPassword.getSenha())) {
+					
+					TokensControl geradorDeTokens = new TokensControl();
+				 	long ONEDAYTIMEINMILLIS = 60 * 60 * 24 * 1000;
+//				 	int ONEDAYTIMEINSECS =  60 * 60 * 24;
+				 	
+				 	String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, user);
+				 	String parsedToStringToken = geradorDeTokens.parseTokenToString(Token);
+				 	System.out.println(parsedToStringToken);
+					
+				 	response.header("Authorization", "Bearer "+Token);
+				 	
+//				 	response.cookie("/","Token", Token ,ONEDAYTIMEINSECS,false,true);
+				 	
+				 	return "Login e senha corretos";
 				} 
 			} else {
 				return "Json incorreto";
@@ -86,7 +88,9 @@ public class Main {
 			usuarioDAO.fecharConexao();
 			return request;
 		});
-
+		
+	  
+		
 		get("/api/sketch", (req, res) -> {
 
 			Connection connection = bd.criarConexao();

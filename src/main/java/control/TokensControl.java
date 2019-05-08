@@ -1,6 +1,7 @@
 package control;
 
-import model.Api;
+import model.ApiSchema;
+import model.Usuario;
 import java.security.Key;
 import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,50 +13,61 @@ import io.jsonwebtoken.Claims;
 
 public class TokensControl {
 	
-	Api apiKey = new Api();
+	ApiSchema apiKey = new ApiSchema();
 	
 	public TokensControl() {
 
 	}
 
-	public String criarJWT(String id, String issuer, String subject, long ttlMillis) {
+	public String criarToken(String issuer, String audience, long dateTimeOfExpiration,Usuario user) {
 
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
-		long nowMillis = System.currentTimeMillis();
-		Date now = new Date(nowMillis);
-		
+		long dateTimeFromNowInMillis = System.currentTimeMillis();
+		Date now = new Date(dateTimeFromNowInMillis);
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(apiKey.getSecret());
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
 		JwtBuilder builder = Jwts.builder()
-				.setId(id)
-				.setIssuedAt(now)
-				.setSubject(subject)
 				.setIssuer(issuer)
-//				.setClaims("")
+				.setAudience(audience)
+				.claim("Id_usuario", user.getidUsuario())
+				.claim("Nome", user.getNome())
+				.claim("Login", user.getLogin())
+				.claim("UsuarioAdmin", user.getUsuarioAdmin())
 				.signWith(signatureAlgorithm, signingKey);
-
-		if (ttlMillis >= 0) {
-			long expMillis = nowMillis + ttlMillis;
-			Date exp = new Date(expMillis);
-			builder.setExpiration(exp);
+			
+		if(dateTimeOfExpiration >= 0 ) {
+			long expirationInMillis = dateTimeFromNowInMillis + dateTimeFromNowInMillis;
+			Date sumOfNowTimeWithExpirationTime = new Date(expirationInMillis );
+			builder.setIssuedAt(now);
+			builder.setExpiration(sumOfNowTimeWithExpirationTime);
 		}
-
 		return builder.compact();
-
 	}
 	
-	public void parseJWT(String jwt) {
+	public String parseTokenToString(String token) {
 
-	    Claims claims = Jwts.parser()         
-	       .setSigningKey(DatatypeConverter.parseBase64Binary(apiKey.getSecret()))
-	       .parseClaimsJws(jwt).getBody();
-	    System.out.println("ID: " + claims.getId());
-	    System.out.println("Subject: " + claims.getSubject());
-	    System.out.println("Issuer: " + claims.getIssuer());
-	    System.out.println("Expiration: " + claims.getExpiration());
+		try {
+				Claims claims = Jwts.parser()         
+		       .setSigningKey(DatatypeConverter.parseBase64Binary(apiKey.getSecret()))
+		       .parseClaimsJws(token).getBody();
+		    
+				return "Issuer: " + claims.getIssuer()
+					    +" Audience: " + claims.getAudience()
+					    +" Id_usuario: " + claims.get("Id_usuario")
+					    +" Nome: " + claims.get("Nome")
+					    +" Login: " + claims.get("Login")
+					    +" UsuarioAdmin: " + claims.get("UsuarioAdmin");
+
+		}catch(JwtException exception) {
+			return exception.getMessage();
+		}
+	    
 	}
 	
-
+	public String getToken(long EXPIRATIONTIME,  Usuario user) {
+		 
+		return this.criarToken("Garten Automação","Webcalmedumi", EXPIRATIONTIME,user);
+		
+	}
 }

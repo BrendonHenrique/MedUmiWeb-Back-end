@@ -62,9 +62,12 @@ public class UsuarioDAO {
 			} else {
 
 				result.next();
-				Usuario usuarioEncontrado = new Usuario().setId_fk_usuario(result.getLong(1))
-						.setNome(result.getString(2)).setSenha(result.getString(3)).setLogin(result.getString(4))
-						.setUsuarioAdmin(result.getBoolean(5));
+				Usuario usuarioEncontrado = new Usuario()
+						.setidUsuario(result.getLong(1))
+						.setNome(result.getString(2))
+						.setSenha(result.getString(3))
+						.setLogin(result.getString(4))
+						.setUsuarioAdmin(result.getInt(5));
 
 				return usuarioEncontrado;
 			}
