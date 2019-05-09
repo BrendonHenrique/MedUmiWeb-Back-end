@@ -5,7 +5,7 @@ import model.Usuario;
 import java.security.Key;
 import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter; 
+import javax.xml.bind.DatatypeConverter;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;
@@ -19,11 +19,9 @@ public class TokensControl {
 
 	}
 
-	public String criarToken(String issuer, String audience, long dateTimeOfExpiration,Usuario user) {
+	public String criarToken(String issuer, String audience, long timeToExpire, Usuario user) {
 
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-		long dateTimeFromNowInMillis = System.currentTimeMillis();
-		Date now = new Date(dateTimeFromNowInMillis);
 		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(apiKey.getSecret());
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
@@ -36,12 +34,12 @@ public class TokensControl {
 				.claim("UsuarioAdmin", user.getUsuarioAdmin())
 				.signWith(signatureAlgorithm, signingKey);
 			
-		if(dateTimeOfExpiration >= 0 ) {
-			long expirationInMillis = dateTimeFromNowInMillis + dateTimeFromNowInMillis;
-			Date sumOfNowTimeWithExpirationTime = new Date(expirationInMillis );
-			builder.setIssuedAt(now);
-			builder.setExpiration(sumOfNowTimeWithExpirationTime);
-		}
+		
+		Date DataDeHoje = new Date();
+		Date DataDeAmanha = new Date(DataDeHoje.getTime() + (timeToExpire));
+		builder.setIssuedAt(DataDeHoje);
+		builder.setExpiration(DataDeAmanha);
+
 		return builder.compact();
 	}
 	
@@ -65,9 +63,9 @@ public class TokensControl {
 	    
 	}
 	
-	public String getToken(long EXPIRATIONTIME,  Usuario user) {
+	public String getToken(long timeToExpire, Usuario user) {
 		 
-		return this.criarToken("Garten Automação","Webcalmedumi", EXPIRATIONTIME,user);
+		return this.criarToken("Garten Automação","Webcalmedumi",timeToExpire, user);
 		
 	}
 }

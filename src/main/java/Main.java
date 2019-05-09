@@ -9,7 +9,7 @@ import model.BancoDeDados;
 import model.Calibracao;
 import model.Usuario;
 import model.loginJsonSchema;
-import model.pontosJsonSchema; 
+import model.pontosJsonSchema;
 import com.google.gson.Gson;
 import static spark.Spark.*;
 
@@ -48,7 +48,7 @@ public class Main {
 		});
 
 		post("/client/login", (request, response) -> {
-			
+
 			response.type("application/json");
 			loginJsonSchema loginSchema = new loginJsonSchema();
 			UsuarioDAO usuarioDAO = new UsuarioDAO();
@@ -59,50 +59,45 @@ public class Main {
 
 				Usuario user = usuarioDAO.getUsuario(userWithOnlyLoginAndPassword.getLogin(),
 						userWithOnlyLoginAndPassword.getSenha());
-				
+
 				if (user.getLogin() == null && user.getSenha() == null) {
 
 					return usuarioDAO.hasThisLogin(userWithOnlyLoginAndPassword.getLogin());
-				
-				}else if(user.getLogin().equals(userWithOnlyLoginAndPassword.getLogin())
+
+				} else if (user.getLogin().equals(userWithOnlyLoginAndPassword.getLogin())
 						&& user.getSenha().equals(userWithOnlyLoginAndPassword.getSenha())) {
-					
+
 					TokensControl geradorDeTokens = new TokensControl();
-				 	long ONEDAYTIMEINMILLIS = 60 * 60 * 24 * 1000;
-//				 	int ONEDAYTIMEINSECS =  60 * 60 * 24;
-				 	
-				 	String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, user);
-				 	String parsedToStringToken = geradorDeTokens.parseTokenToString(Token);
-				 	System.out.println(parsedToStringToken);
-					
-				 	response.header("Authorization", "Bearer "+Token);
-				 	
-//				 	response.cookie("/","Token", Token ,ONEDAYTIMEINSECS,false,true);
-				 	
-				 	return "Login e senha corretos";
-				} 
+					long ONEDAYTIMEINMILLIS = 1000 * 60 * 60 * 24;
+
+					String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, user);
+					String parsedToStringToken = geradorDeTokens.parseTokenToString(Token);
+					System.out.println(parsedToStringToken);
+
+					response.header("Authorization", "Bearer " + Token);
+
+					return "Login e senha corretos:" + Token;
+				}
 			} else {
 				return "Json incorreto";
 			}
-			
+
 			usuarioDAO.fecharConexao();
 			return request;
 		});
-		
-	  
-		
+
 		get("/api/sketch", (req, res) -> {
 
 			Connection connection = bd.criarConexao();
 			Statement statement = connection.createStatement();
-			
+
 			statement.execute("INSERT INTO webcal (pontos) VALUES (null);", Statement.RETURN_GENERATED_KEYS);
 			ResultSet generatedKeys = statement.getGeneratedKeys();
 			generatedKeys.next();
 			int idGerado = generatedKeys.getInt(1);
 			Calibracao novoCalibracao = new Calibracao();
 			novoCalibracao.setId(idGerado);
-			
+
 			statement.close();
 			bd.fecharConexao(connection);
 			return novoCalibracao.getHashid();
