@@ -18,14 +18,20 @@ public class CalibracaoDAO {
             e.printStackTrace();
         }
     }
+    
+    public void fecharConexao() {
+        bd.fecharConexao(con);
+    }
+
 
     public Calibracao getCalibracao(String hashid) {
 
         Calibracao cal = new Calibracao();
         String pontos = null;
         Date dataCriacao = null, dataModificacao = null;
+        int desabilitado;
         cal.setHashid(hashid);
-		String selectHash = "SELECT id, pontos, data_de_criacao, data_de_modificacao FROM webcal where id = ?";
+		String selectHash = "SELECT id, pontos, data_de_criacao, data_de_modificacao, desabilitado FROM webcal where id = ?";
 
         PreparedStatement preparedStatement = null;
         try {
@@ -37,11 +43,14 @@ public class CalibracaoDAO {
             pontos = rs.getString(2);
             dataCriacao = rs.getDate(3);
             dataModificacao = rs.getDate(4);
+            desabilitado = rs.getInt(5);
             preparedStatement.close();
+            
             cal.setPontos(pontos);
             cal.setDataDeCriacao(dataCriacao);
             cal.setDataDeModificacao(dataModificacao);
- 
+            cal.setDesabilitado(desabilitado);
+            
         	return cal;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,10 +80,6 @@ public class CalibracaoDAO {
 
     public Calibracao criarNovaCalibracao() {
         return null;
-    }
-
-    public void fecharConexao() {
-        bd.fecharConexao(con);
     }
 
 }

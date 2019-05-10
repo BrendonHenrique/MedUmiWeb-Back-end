@@ -26,14 +26,14 @@ public class TokensControl {
 		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
 		JwtBuilder builder = Jwts.builder()
-				.setIssuer(issuer)
-				.setAudience(audience)
-				.claim("Id_usuario", user.getidUsuario())
-				.claim("Nome", user.getNome())
-				.claim("Login", user.getLogin())
-				.claim("UsuarioAdmin", user.getUsuarioAdmin())
-				.signWith(signatureAlgorithm, signingKey);
-			
+		.setIssuer(issuer)
+		.setAudience(audience)
+		.claim("Id_usuario", user.getidUsuario())
+		.claim("Nome", user.getNome())
+		.claim("Login", user.getLogin())
+		.claim("UsuarioAdmin", user.getUsuarioAdmin())
+		.signWith(signatureAlgorithm, signingKey);
+	
 		
 		Date DataDeHoje = new Date();
 		Date DataDeAmanha = new Date(DataDeHoje.getTime() + (timeToExpire));
@@ -43,22 +43,22 @@ public class TokensControl {
 		return builder.compact();
 	}
 	
-	public String parseTokenToString(String token) {
+	public Usuario getUsuarioWithToken(String token) {
 
 		try {
 				Claims claims = Jwts.parser()         
 		       .setSigningKey(DatatypeConverter.parseBase64Binary(apiKey.getSecret()))
 		       .parseClaimsJws(token).getBody();
 		    
-				return "Issuer: " + claims.getIssuer()
-					    +" Audience: " + claims.getAudience()
-					    +" Id_usuario: " + claims.get("Id_usuario")
-					    +" Nome: " + claims.get("Nome")
-					    +" Login: " + claims.get("Login")
-					    +" UsuarioAdmin: " + claims.get("UsuarioAdmin");
-
+				Usuario user = new Usuario()
+				.setidUsuario(Long.parseLong(claims.get("Id_usuario").toString()))
+				.setNome(claims.get("Nome").toString())
+				.setLogin(claims.get("Login").toString())
+				.setUsuarioAdmin(Integer.parseInt(claims.get("UsuarioAdmin").toString()));
+					    
+				 return user;
 		}catch(JwtException exception) {
-			return exception.getMessage();
+			return null;
 		}
 	    
 	}
@@ -68,4 +68,23 @@ public class TokensControl {
 		return this.criarToken("Garten Automação","Webcalmedumi",timeToExpire, user);
 		
 	}
+
+	public boolean validateToken(String Token) {
+		
+		try{
+			@SuppressWarnings("unused")
+			Jws<Claims> jws = Jwts.parser()
+			.setSigningKey(apiKey.getSecret())
+			.parseClaimsJws(Token);
+			
+			return true;
+
+		}catch(JwtException exception){
+			System.out.println(exception.getMessage());
+			return false;
+		}
+	}
+	
+	
+	
 }

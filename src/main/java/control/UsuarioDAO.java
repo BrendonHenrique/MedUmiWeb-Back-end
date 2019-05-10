@@ -34,7 +34,7 @@ public class UsuarioDAO {
 		}
 	}
 
-	public String hasThisLogin(String login) {
+	public String validateLoginOrPassword(String login) {
 		try {
 			preparedStatement = con.prepareStatement(searchWithLogin);
 			preparedStatement.setString(1, login);
@@ -50,7 +50,7 @@ public class UsuarioDAO {
 		}
 	}
 
-	public Usuario getUsuario(String login, String senha) {
+	public Usuario getUsuarioInDataBase(String login, String senha) {
 		try {
 			preparedStatement = con.prepareStatement(searchWithLoginAndPassword);
 			preparedStatement.setString(1, login);

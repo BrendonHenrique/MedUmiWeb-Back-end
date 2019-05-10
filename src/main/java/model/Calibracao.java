@@ -9,8 +9,15 @@ public class Calibracao {
     private String pontos;
     private Date dataDeCriacao;
     private Date dataDeModificacao;
+    private int desabilitado;
     
+    public int getDesabilitado() {
+    	return this.desabilitado;
+    }
     
+    public void setDesabilitado(int desabilitado) {
+    	this.desabilitado =  desabilitado;
+    }
     public long getId() {
         return id;
     }
