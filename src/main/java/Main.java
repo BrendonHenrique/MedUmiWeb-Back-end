@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Timestamp;
 
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.google.gson.Gson;
@@ -46,12 +45,26 @@ import model.pontosJsonSchema;
 public class Main {
 
 	public static void main(String[] args) throws ProcessingException, IOException {
+		
+		final String ArquivosEstaticos = "/public";
+
+		final String PATH_HOME = "/client/home/";
+		final String PATH_HOME_WITH_HASH = "/client/home/:hash";
+		
+		final String PATH_LOGIN = "/";
+		final String PATH_WITH_TOKEN = "/api/sketch/:Token";
+		
+		final String PATH_ADMINPAGE = "/admin/";
+		final String PATH_REGISTER = "/admin/register";
+		final String PATH_USERSLIST = "/admin/usersList";
+		
 
 		port(8081);
-		staticFiles.location("/public");
-
-		BancoDeDados bd = new BancoDeDados();
-		bd.inicializarBancoDeDados();
+		staticFiles.location(ArquivosEstaticos);
+		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
+		BancoDeDadosWebcal.inicializarBancoDeDados();
+		
+		
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
 
 		after((request, response) -> {
@@ -59,8 +72,10 @@ public class Main {
 			response.header("Access-Control-Allow-Methods", "GET");
 			return;
 		});
+		
+		
 
-		post("/client/login", (request, response) -> {
+		post(PATH_LOGIN, (request, response) -> {
 
 			response.type("application/json");
 			loginJsonSchema loginSchema = new loginJsonSchema();
@@ -68,25 +83,24 @@ public class Main {
 
 			if (JsonSchemaValidator.isJsonValid(loginSchema.getSchema(), request.body())) {
 				Gson gson = new Gson();
-				Usuario userWithOnlyLoginAndPassword = gson.fromJson(request.body(), Usuario.class);
-				Usuario user = usuarioDAO.getUsuarioInDataBase(
-						userWithOnlyLoginAndPassword.getLogin(),
-						userWithOnlyLoginAndPassword.getSenha());
+				Usuario userWithInputedLoginAndPassword = gson.fromJson(request.body(), Usuario.class);
+				Usuario userFoundedInDatabase = usuarioDAO.searchUserInDatabase(
+						userWithInputedLoginAndPassword.getLogin(),
+						userWithInputedLoginAndPassword.getSenha());
 
-				if (user.getLogin() == null && user.getSenha() == null) {
+				if (userFoundedInDatabase.getLogin() == null && userFoundedInDatabase.getSenha() == null) {
 
-					return usuarioDAO.validateLoginOrPassword(userWithOnlyLoginAndPassword.getLogin());
+					return usuarioDAO.validateLoginAndPassword(userWithInputedLoginAndPassword.getLogin());
 
-				} else if (user.getLogin().equals(userWithOnlyLoginAndPassword.getLogin())
-						&& user.getSenha().equals(userWithOnlyLoginAndPassword.getSenha())) {
-
+				} else if (userFoundedInDatabase.getLogin().equals(userWithInputedLoginAndPassword.getLogin())
+					&& userFoundedInDatabase.getSenha().equals(userWithInputedLoginAndPassword.getSenha())) {
+					
+					
 					TokensControl geradorDeTokens = new TokensControl();
-					long ONEDAYTIMEINMILLIS = 1000 * 60 * 60 * 24;
-
-					String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, user);
+					final long ONEDAYTIMEINMILLIS = 1000 * 60 * 60 * 24;
+					final String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, userFoundedInDatabase);
 
 					response.header("Authorization", "Bearer " + Token);
-
 					return "Login e senha corretos:" + Token;
 				}
 			} else {
@@ -97,7 +111,7 @@ public class Main {
 			return request;
 		});
 
-		get("/api/sketch/:Token", (req, res) -> {
+		get(PATH_WITH_TOKEN, (req, res) -> {
 			
 			String token = req.params(":Token");	
 			TokensControl tokencontrol = new TokensControl();
@@ -105,7 +119,7 @@ public class Main {
 			
 			if(user!=null) {
 				
-				Connection connection = bd.criarConexao();
+				Connection connection = BancoDeDadosWebcal.criarConexao();
 				Statement statement = connection.createStatement();
 				PreparedStatement preparedStatement;
 				
@@ -127,7 +141,7 @@ public class Main {
 		        
 		        if(preparedStatement.getUpdateCount() > 0) {
 			        preparedStatement.close();
-					bd.fecharConexao(connection);
+					BancoDeDadosWebcal.fecharConexao(connection);
 					return novoCalibracao.getHashid();
 		        }
 			}
@@ -136,7 +150,7 @@ public class Main {
 	        
 		});
 		
-		post("/api/sketch/:hash", (request, response) -> {
+		post(PATH_HOME_WITH_HASH, (request, response) -> {
 			pontosJsonSchema pontosSchema = new pontosJsonSchema();
 			Boolean resultado = false;
 
@@ -159,7 +173,7 @@ public class Main {
 //	    verificar se a calibração está desabilitada
 //		retorna a calibração e se ela está desabilitada
 		
-		get("/api/sketch/:hash", (request, response) -> {
+		get(PATH_HOME_WITH_HASH, (request, response) -> {
 
 			String hashid = request.params(":hash");
 			Calibracao cal = calibracaoDAO.getCalibracao(hashid);
