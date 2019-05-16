@@ -109,6 +109,14 @@ public class Main {
 			
 		});
 		
+		post("/auth/admin/", (request,response)->{
+			final String Token = request.body();
+			TokensControl tokencontrol =  new TokensControl();
+			Usuario userFounded = tokencontrol.getUsuarioWithToken(Token);
+			return  userFounded.getUsuarioAdmin();
+			
+		});
+		
 		
 		get(PATH_WITH_TOKEN, (req, res) -> {
 			 
