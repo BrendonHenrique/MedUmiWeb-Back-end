@@ -1,7 +1,7 @@
-import static spark.Spark.after;
+import static spark.Spark.after; 
 import static spark.Spark.get;
 import static spark.Spark.port;
-import static spark.Spark.post;
+import static spark.Spark.post; 
 import static spark.Spark.staticFiles;
 
 import java.io.IOException;
@@ -45,36 +45,24 @@ import model.pontosJsonSchema;
 public class Main {
 
 	public static void main(String[] args) throws ProcessingException, IOException {
+		port(8081);
 		
 		final String ArquivosEstaticos = "/public";
-
-		final String PATH_HOME = "/client/home/";
-		final String PATH_HOME_WITH_HASH = "/client/home/:hash";
-		
-		final String PATH_LOGIN = "/";
-		final String PATH_WITH_TOKEN = "/api/sketch/:Token";
-		
-		final String PATH_ADMINPAGE = "/admin/";
-		final String PATH_REGISTER = "/admin/register";
-		final String PATH_USERSLIST = "/admin/usersList";
-		
-
-		port(8081);
 		staticFiles.location(ArquivosEstaticos);
+		final String PATH_HOME_WITH_HASH = "/client/home/:hash";
+		final String PATH_LOGIN = "/client/login";
+		final String PATH_WITH_TOKEN = "/api/sketch/:Token";
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
 		BancoDeDadosWebcal.inicializarBancoDeDados();
-		
-		
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
 
+		
 		after((request, response) -> {
 			response.header("Access-Control-Allow-Origin", "*");
 			response.header("Access-Control-Allow-Methods", "GET");
 			return;
 		});
 		
-		
-
 		post(PATH_LOGIN, (request, response) -> {
 
 			response.type("application/json");
@@ -101,7 +89,9 @@ public class Main {
 					final String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, userFoundedInDatabase);
 
 					response.header("Authorization", "Bearer " + Token);
-					return "Login e senha corretos:" + Token;
+					
+					
+					return "Login e senha corretos:" + Token + ":" + userFoundedInDatabase.getUsuarioAdmin();
 				}
 			} else {
 				return "Json incorreto";
@@ -111,8 +101,17 @@ public class Main {
 			return request;
 		});
 
-		get(PATH_WITH_TOKEN, (req, res) -> {
+
+		post("/auth/", (request, response) -> {
+			final String token = request.body();
+			TokensControl tokencontrol = new TokensControl();
+			return tokencontrol.validateToken(token);
 			
+		});
+		
+		
+		get(PATH_WITH_TOKEN, (req, res) -> {
+			 
 			String token = req.params(":Token");	
 			TokensControl tokencontrol = new TokensControl();
 			Usuario user = tokencontrol.getUsuarioWithToken(token);
@@ -147,8 +146,9 @@ public class Main {
 			}
 			
 	        return "";
-	        
-		});
+	    });
+		
+		
 		
 		post(PATH_HOME_WITH_HASH, (request, response) -> {
 			pontosJsonSchema pontosSchema = new pontosJsonSchema();
@@ -166,20 +166,14 @@ public class Main {
 		});
 		
 		
-		
-//		Get que retorna calibração , recebendo o hash pela URL 
-//		Verifica o token
-//		Procurar calibracao pelo hash
-//	    verificar se a calibração está desabilitada
-//		retorna a calibração e se ela está desabilitada
-		
 		get(PATH_HOME_WITH_HASH, (request, response) -> {
-
+			
 			String hashid = request.params(":hash");
 			Calibracao cal = calibracaoDAO.getCalibracao(hashid);
-			return cal.toString()+":"+cal.getDesabilitado();
+			System.out.println(cal.getPontos());
+			
+			return cal.toString()+";"+cal.getDesabilitado();
+			
 		});
-
-	
 	}
 }

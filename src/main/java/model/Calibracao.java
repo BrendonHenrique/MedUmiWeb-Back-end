@@ -30,32 +30,36 @@ public class Calibracao {
         return pontos;
     }
 
-    public void setPontos(String pontos) {
+    public Calibracao setPontos(String pontos) {
         this.pontos = pontos;
+        return this;
     }
 
     public Date getDataDeCriacao() {
         return dataDeCriacao;
     }
 
-    public void setDataDeCriacao(Date dataDeCriacao) {
+    public Calibracao setDataDeCriacao(Date dataDeCriacao) {
         this.dataDeCriacao = dataDeCriacao;
+        return this;
     }
 
     public Date getDataDeModificacao() {
         return dataDeModificacao;
     }
 
-    public void setDataDeModificacao(Date dataDeModificacao) {
+    public Calibracao setDataDeModificacao(Date dataDeModificacao) {
         this.dataDeModificacao = dataDeModificacao;
+        return this;
     }
 
     public String getHashid() {
         return CRIADOR_DE_HASHID.encode(this.id);
     }
 
-    public void setHashid(String hashid) {
+    public Calibracao setHashid(String hashid) {
         this.id = CRIADOR_DE_HASHID.decode(hashid)[0];
+        return this;
     }
 
     @Override
