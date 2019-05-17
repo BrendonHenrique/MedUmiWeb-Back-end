@@ -11,9 +11,10 @@ public class UsuarioDAO {
 
 	private Connection con = null;
 	private BancoDeDados bd = null;
-	String searchForAllFields = "SELECT id_usuario,nome,senha,login,UsuarioAdmin FROM usuarios";
+	String searchForAllFields = "SELECT * FROM usuarios";
 	String searchWithLoginAndPassword = searchForAllFields + " WHERE login = ? AND senha = ?";
 	String searchWithLogin = searchForAllFields + " WHERE login = ?";
+ 
 	PreparedStatement preparedStatement;
 
 	public UsuarioDAO() {
@@ -49,7 +50,27 @@ public class UsuarioDAO {
 			return error.getMessage();
 		}
 	}
+	
+	
+	public boolean hasThisLoginInDatabase(String login) {
+		try {
+			preparedStatement = con.prepareStatement(searchWithLogin);
+			preparedStatement.setString(1, login); 
+			ResultSet result = preparedStatement.executeQuery();
 
+			if (!result.isBeforeFirst()) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (SQLException error) {
+			System.out.println(error.getMessage());
+		}
+		return true;
+	} 
+	
+	
+	
 	public Usuario searchUserInDatabase(String login, String senha) {
 		try {
 			preparedStatement = con.prepareStatement(searchWithLoginAndPassword);

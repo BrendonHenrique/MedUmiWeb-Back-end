@@ -1,4 +1,6 @@
-import static spark.Spark.after; 
+import static spark.Spark.after;
+import static spark.Spark.before; 
+import static spark.Spark.halt;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post; 
@@ -24,20 +26,6 @@ import model.loginJsonSchema;
 import model.pontosJsonSchema;
 
 /**
- * Classe responsável pelo request e response da API do wbecalmedumi.
- * 
- * A API é repartida em três partes:
- * 
- * Primeiro GET : Responsável pela criação de uma posição no banco , com valores
- * de pontos nulos e retorno do ID criado em formato de HASH.
- * 
- * Segundo GET : Recebe o ID no formato de hash na rota /api/sketch e retorna os
- * pontos da calibração no body do response.
- * 
- * POST : Recebe hash na rota e pontos no body e atualiza os valores no ID
- * correspondente do banco de dados e retorna no body do response.
- * 
- * 
  * @version 3.0
  * @author Brendon H.S.S
  */
@@ -45,24 +33,52 @@ import model.pontosJsonSchema;
 public class Main {
 
 	public static void main(String[] args) throws ProcessingException, IOException {
-		port(8081);
 		
 		final String ArquivosEstaticos = "/public";
-		staticFiles.location(ArquivosEstaticos);
 		final String PATH_HOME_WITH_HASH = "/client/home/:hash";
 		final String PATH_LOGIN = "/client/login";
 		final String PATH_WITH_TOKEN = "/api/sketch/:Token";
-		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
-		BancoDeDadosWebcal.inicializarBancoDeDados();
-		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
-
+		final String PATH_AUTH_TOKEN = "/auth/token";
+		final String PATH_AUTH_ADMIN = "/auth/admin/";
+		final String PATH_NEW_SEARCHLOGIN = "/admin/verifyLogin/";
+		final String PATH_NEW_USER = "/admin/newUser/";
 		
+		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
+		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
+		
+		port(8081);
+		staticFiles.location(ArquivosEstaticos);
+		BancoDeDadosWebcal.inicializarBancoDeDados();
+		
+						
+		// Filtros
 		after((request, response) -> {
 			response.header("Access-Control-Allow-Origin", "*");
 			response.header("Access-Control-Allow-Methods", "GET");
 			return;
 		});
 		
+
+		//Método para registro de novo usuário
+		post(PATH_NEW_USER, (request, response)->{
+					
+//			System.out.println(request.body());
+			return "";	
+		});
+		
+		post(PATH_NEW_SEARCHLOGIN, (request, response)->{
+					
+			UsuarioDAO usuarioDAO = new UsuarioDAO();
+			usuarioDAO.hasThisLoginInDatabase(request.body());
+			
+			return usuarioDAO.hasThisLoginInDatabase(request.body()) ? false : true ;	
+		});
+		
+		
+		 
+		
+		
+		//Métodos para Login
 		post(PATH_LOGIN, (request, response) -> {
 
 			response.type("application/json");
@@ -101,23 +117,13 @@ public class Main {
 			return request;
 		});
 
-
-		post("/auth/", (request, response) -> {
-			final String token = request.body();
-			TokensControl tokencontrol = new TokensControl();
-			return tokencontrol.validateToken(token);
-			
-		});
-		
-		post("/auth/admin/", (request,response)->{
-			final String Token = request.body();
-			TokensControl tokencontrol =  new TokensControl();
-			Usuario userFounded = tokencontrol.getUsuarioWithToken(Token);
-			return  userFounded.getUsuarioAdmin();
-			
-		});
 		
 		
+		
+		
+		//Métodos Getters e Setters das amostras
+				
+		//Get Token and return Hash 		
 		get(PATH_WITH_TOKEN, (req, res) -> {
 			 
 			String token = req.params(":Token");	
@@ -155,9 +161,8 @@ public class Main {
 			
 	        return "";
 	    });
-		
-		
-		
+				
+		//Get pontos and return isAtualized		
 		post(PATH_HOME_WITH_HASH, (request, response) -> {
 			pontosJsonSchema pontosSchema = new pontosJsonSchema();
 			Boolean resultado = false;
@@ -172,8 +177,8 @@ public class Main {
 			return resultado ? "atualizado" : "naoatualizado";
 
 		});
-		
-		
+				
+		//Get hash and return pontos + isDesabilitado		
 		get(PATH_HOME_WITH_HASH, (request, response) -> {
 			
 			String hashid = request.params(":hash");
@@ -183,5 +188,28 @@ public class Main {
 			return cal.toString()+";"+cal.getDesabilitado();
 			
 		});
+		
+
+		
+		
+		
+		
+		//Métodos para autenticação de Token e das credenciais de ADM
+		
+		post(PATH_AUTH_TOKEN, (request, response) -> {
+			final String token = request.body();
+			TokensControl tokencontrol = new TokensControl();
+			return tokencontrol.validateToken(token);
+			
+		});
+		
+		post(PATH_AUTH_ADMIN, (request,response)->{
+			final String Token = request.body();
+			TokensControl tokencontrol =  new TokensControl();
+			Usuario userFounded = tokencontrol.getUsuarioWithToken(Token);
+			return  userFounded.getUsuarioAdmin();
+			
+		});
+		
 	}
 }
