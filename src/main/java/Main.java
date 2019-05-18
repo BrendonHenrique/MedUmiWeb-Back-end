@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.LinkedList;
 
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.google.gson.Gson;
@@ -40,7 +41,7 @@ public class Main {
 		final String PATH_WITH_TOKEN = "/api/sketch/:Token";
 		final String PATH_AUTH_TOKEN = "/auth/token";
 		final String PATH_AUTH_ADMIN = "/auth/admin/";
-		final String PATH_NEW_SEARCHLOGIN = "/admin/verifyLogin/";
+		final String PATH_SEARCHLOGIN = "/admin/verifyLogin/";
 		final String PATH_NEW_USER = "/admin/newUser/";
 		
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
@@ -60,13 +61,8 @@ public class Main {
 		
 
 		//Método para registro de novo usuário
-		post(PATH_NEW_USER, (request, response)->{
-					
-//			System.out.println(request.body());
-			return "";	
-		});
 		
-		post(PATH_NEW_SEARCHLOGIN, (request, response)->{
+		post(PATH_SEARCHLOGIN, (request, response)->{
 					
 			UsuarioDAO usuarioDAO = new UsuarioDAO();
 			usuarioDAO.hasThisLoginInDatabase(request.body());
@@ -74,6 +70,22 @@ public class Main {
 			return usuarioDAO.hasThisLoginInDatabase(request.body()) ? false : true ;	
 		});
 		
+		post(PATH_NEW_USER, (request, response)->{
+
+			Gson gson = new Gson();
+			Usuario user = gson.fromJson(request.body(), Usuario.class);
+			UsuarioDAO usuariodao = new UsuarioDAO();
+			Boolean result = usuariodao.insertNewUsuario(user);
+			
+			return result;	
+		});
+		
+		get("/admin/listUsers/", (request, response)->{
+			
+			UsuarioDAO usuariodao = new UsuarioDAO();
+			LinkedList<Usuario> lista = usuariodao.listAllUsers();
+			return lista;
+		});
 		
 		 
 		

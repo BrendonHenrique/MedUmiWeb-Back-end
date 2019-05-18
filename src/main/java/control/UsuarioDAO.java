@@ -4,17 +4,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import model.BancoDeDados;
 import model.Usuario;
+import java.util.LinkedList;
 
 public class UsuarioDAO {
 
 	private Connection con = null;
 	private BancoDeDados bd = null;
-	String searchForAllFields = "SELECT * FROM usuarios";
-	String searchWithLoginAndPassword = searchForAllFields + " WHERE login = ? AND senha = ?";
-	String searchWithLogin = searchForAllFields + " WHERE login = ?";
- 
+	private String searchForAllFields = "SELECT * FROM usuarios";
+	private String searchWithLoginAndPassword = searchForAllFields + " WHERE login = ? AND senha = ?";
+	private String searchWithLogin = searchForAllFields + " WHERE login = ?";
+	private String insertNewUser = "INSERT INTO usuarios (nome , senha , login , UsuarioAdmin , data_de_criacao ) VALUES (?,?,?,?,?) ";
+	private String selectAllUsers = "SELECT * from usuarios";
+	
 	PreparedStatement preparedStatement;
 
 	public UsuarioDAO() {
@@ -50,8 +54,7 @@ public class UsuarioDAO {
 			return error.getMessage();
 		}
 	}
-	
-	
+	 
 	public boolean hasThisLoginInDatabase(String login) {
 		try {
 			preparedStatement = con.prepareStatement(searchWithLogin);
@@ -69,7 +72,33 @@ public class UsuarioDAO {
 		return true;
 	} 
 	
-	
+	public boolean insertNewUsuario(Usuario user) {
+
+		try {
+	        
+			preparedStatement = con.prepareStatement(insertNewUser);
+			preparedStatement.setString(1, user.getNome());
+			preparedStatement.setString(2, user.getSenha());
+			preparedStatement.setString(3, user.getLogin());
+			preparedStatement.setInt(4, user.getUsuarioAdmin());
+			preparedStatement.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+			preparedStatement.executeUpdate();
+	    	
+			if (preparedStatement.getUpdateCount() > 0) {
+
+		        preparedStatement.close();
+				return true;
+			} else {
+				return false;
+			}
+
+		} catch (SQLException error) {
+			System.out.println(error.getMessage());
+		}
+		
+		
+		return false;
+	}
 	
 	public Usuario searchUserInDatabase(String login, String senha) {
 		try {
@@ -97,5 +126,33 @@ public class UsuarioDAO {
 		}
 		return null;
 	}
-
+	
+	public LinkedList<Usuario> listAllUsers() {
+		try {
+			preparedStatement = con.prepareStatement(selectAllUsers);
+			ResultSet result = preparedStatement.executeQuery();
+			LinkedList<Usuario> listaDeUsuarios = new LinkedList<Usuario>();
+	        
+			while(result.next()) {
+				
+				Usuario  user =  new Usuario();
+				user.setidUsuario(result.getInt(1))
+				.setNome(result.getString(2))
+				.setSenha(result.getString(3))
+				.setLogin(result.getString(4))
+				.setUsuarioAdmin(result.getInt(5))
+				.setdataDeCriacao(result.getTimestamp(6));
+				
+				listaDeUsuarios.add(user);
+			}
+			
+			return listaDeUsuarios;
+		}catch(SQLException error) {
+			System.out.println(error.getMessage());
+		}
+		
+		return null;
+	}
+	
 }
+

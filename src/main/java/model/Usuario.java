@@ -1,5 +1,9 @@
 package model;
 
+import java.util.Date;
+
+import com.google.gson.Gson;
+
 public class Usuario {
 	
 	private long idUsuario;
@@ -7,8 +11,19 @@ public class Usuario {
 	private String senha;
 	private String login;
 	private int usuarioAdmin;
+	private Date dataDeCriacao;
+	
 	
 	public Usuario() { 
+	}
+	
+	public Date getdataDeCriacao() {
+		return this.dataDeCriacao;
+	}
+	
+	public Usuario setdataDeCriacao(Date novaData) {
+		this.dataDeCriacao = novaData;
+		return this;
 	}
 	
 	public int getUsuarioAdmin() {
@@ -49,5 +64,12 @@ public class Usuario {
 		return this;
 	}
 	
-	
+
+    @Override
+    public String toString() {
+
+        Gson gson = new Gson();
+        
+    	return gson.toJson(this);
+    }
 }
