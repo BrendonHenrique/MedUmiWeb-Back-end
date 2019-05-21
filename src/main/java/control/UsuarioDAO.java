@@ -18,7 +18,9 @@ public class UsuarioDAO {
 	private String searchWithLogin = searchForAllFields + " WHERE login = ?";
 	private String insertNewUser = "INSERT INTO usuarios (nome , senha , login , UsuarioAdmin , data_de_criacao ) VALUES (?,?,?,?,?) ";
 	private String selectAllUsers = "SELECT * from usuarios";
-	
+	private String updateUser = "UPDATE `pontos_calibracao`.`usuarios` SET  `nome` = ?,  `senha` = ?,  `login` = ?, `UsuarioAdmin` = ?  WHERE `id_usuario`= ? ;";
+    private String deleteUserWithId = "DELETE FROM `pontos_calibracao`.`usuarios` WHERE `id_usuario`= ? ";
+    
 	PreparedStatement preparedStatement;
 
 	public UsuarioDAO() {
@@ -154,5 +156,62 @@ public class UsuarioDAO {
 		return null;
 	}
 	
+	public boolean atualizarUsuario(Usuario user) {
+		
+	try {
+			preparedStatement = con.prepareStatement(updateUser);
+			preparedStatement.setString(1, user.getNome());
+			preparedStatement.setString(2, user.getSenha());
+			preparedStatement.setString(3, user.getLogin());
+			preparedStatement.setInt(4, user.getUsuarioAdmin());
+			preparedStatement.setLong(5, user.getidUsuario());
+			
+			preparedStatement.executeUpdate();
+			
+	      
+	    	if (preparedStatement.getUpdateCount() > 0) {
+	
+		        preparedStatement.close();
+				return true;
+			} else {
+				return false;
+			}
+	
+			 
+			} catch (SQLException error) {
+				System.out.println(error.getMessage());
+			}
+		
+		
+			return false;
+	}
+	
+	
+	public boolean deletarUsuario(long id) {
+		
+	try {
+			preparedStatement = con.prepareStatement(deleteUserWithId);
+			preparedStatement.setLong(1, id);
+			preparedStatement.executeUpdate();
+			
+	    	if (preparedStatement.getUpdateCount() > 0) {
+	
+		        preparedStatement.close();
+				return true;
+			} else {
+				return false;
+			}
+	
+			 
+			} catch (SQLException error) {
+				System.out.println(error.getMessage());
+			}
+		
+		
+			return false;
+	}
+	
+	
+		
 }
 

@@ -10,7 +10,29 @@ public class Calibracao {
     private Date dataDeCriacao;
     private Date dataDeModificacao;
     private int desabilitado;
+	private int M;
+	private int B;
+	
     
+
+	public int getB() {
+		return this.B;
+	}
+	
+	public Calibracao setB(int B) {
+		this.B = B;
+		return this;
+	}
+
+	public int getM() {
+		return this.M;
+	}
+	
+	public Calibracao setM(int M) {
+		this.M = M;
+		return this;
+	}
+	
     public int getDesabilitado() {
     	return this.desabilitado;
     }
@@ -61,9 +83,14 @@ public class Calibracao {
         this.id = CRIADOR_DE_HASHID.decode(hashid)[0];
         return this;
     }
+    
+    public long parseHash(String hashid) {
+    	return CRIADOR_DE_HASHID.decode(hashid)[0];
+    }
 
     @Override
     public String toString() {
         return pontos == "null" ? "[]" : this.pontos;
     }
+
 }

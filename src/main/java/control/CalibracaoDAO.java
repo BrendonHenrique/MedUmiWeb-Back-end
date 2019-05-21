@@ -3,6 +3,7 @@ import java.sql.*;
 
 import model.BancoDeDados;
 import model.Calibracao;
+import model.CalibracaoMB;
 
 public class CalibracaoDAO {
     private Connection con = null;
@@ -22,7 +23,6 @@ public class CalibracaoDAO {
     public void fecharConexao() {
         bd.fecharConexao(con);
     }
-
 
     public Calibracao getCalibracao(String hashid) {
 
@@ -54,7 +54,7 @@ public class CalibracaoDAO {
     }
 
     public Boolean atualizarCalibracao(Calibracao cal) throws ClassNotFoundException, SQLException {
-      
+        
         String update = "UPDATE webcal SET pontos = ?, data_de_modificacao = ? WHERE id = ? ";
         Connection connection = bd.criarConexao();
         PreparedStatement preparedStatement = connection.prepareStatement(update);
@@ -72,9 +72,28 @@ public class CalibracaoDAO {
     		return false;
         }
     }
-
-    public Calibracao criarNovaCalibracao() {
-        return null;
+    
+    public Boolean atualizarMB(Calibracao cal, CalibracaoMB MB) throws ClassNotFoundException, SQLException {
+      
+        String update = "UPDATE webcal SET M = ?, B = ? WHERE id = ? ";
+        Connection connection = bd.criarConexao();
+        PreparedStatement preparedStatement = connection.prepareStatement(update);
+        preparedStatement.setInt(1, MB.getM());
+        preparedStatement.setInt(2, MB.getB());
+        preparedStatement.setLong(3, cal.getId());
+        System.out.println("Atualizado M e B com os valores "+ MB.getM() + " " + MB.getB() + " no ID "+cal.getId());
+        preparedStatement.executeUpdate();
+        boolean atualizouAlgo = preparedStatement.getUpdateCount() > 0;
+    	preparedStatement.close();
+        bd.fecharConexao(connection);
+        
+        if(atualizouAlgo) {
+        	return true;
+        }else {
+    		return false;
+        }
     }
+
+   
 
 }

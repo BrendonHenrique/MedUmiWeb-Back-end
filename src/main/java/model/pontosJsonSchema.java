@@ -31,6 +31,14 @@ public class pontosJsonSchema {
 				"            \"xReajustado\": {\n" + 
 				"                \"description\": \"Coordenada das amostras garten reajustadas utilizando a equação inversa\",\n" + 
 				"                \"type\": \"number\"\n" + 
+				"            },\n" + 
+				"            \"M\":{\n" + 
+				"            	\"description\": \"Valor de calibração  do gradiente\",\n" + 
+				"            	\"type\": \"number\"\n" + 
+				"            },\n" + 
+				"            \"B\":{\n" + 
+				"            	\"description\": \"Valor de calibração  do interceptador\",\n" + 
+				"            	\"type\": \"number\"\n" + 
 				"            }\n" + 
 				"        }\n" + 
 				"    }\n" + 
