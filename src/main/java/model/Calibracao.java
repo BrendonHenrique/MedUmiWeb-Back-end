@@ -10,25 +10,25 @@ public class Calibracao {
     private Date dataDeCriacao;
     private Date dataDeModificacao;
     private int desabilitado;
-	private int M;
-	private int B;
+	private float M;
+	private float B;
 	
     
 
-	public int getB() {
+	public float getB() {
 		return this.B;
 	}
 	
-	public Calibracao setB(int B) {
+	public Calibracao setB(float  B) {
 		this.B = B;
 		return this;
 	}
 
-	public int getM() {
+	public float getM() {
 		return this.M;
 	}
 	
-	public Calibracao setM(int M) {
+	public Calibracao setM(float  M) {
 		this.M = M;
 		return this;
 	}

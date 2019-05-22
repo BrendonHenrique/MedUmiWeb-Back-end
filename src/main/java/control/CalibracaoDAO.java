@@ -77,12 +77,12 @@ public class CalibracaoDAO {
     public Boolean atualizarMB(Calibracao cal, CalibracaoMB MB) throws ClassNotFoundException, SQLException {
       
         String update = "UPDATE webcal SET M = ?, B = ? WHERE id = ? ";
+        System.out.println(MB.toString());
         Connection connection = bd.criarConexao();
         PreparedStatement preparedStatement = connection.prepareStatement(update);
-        preparedStatement.setInt(1, MB.getM());
-        preparedStatement.setInt(2, MB.getB());
+        preparedStatement.setFloat(1, MB.getM());
+        preparedStatement.setFloat(2, MB.getB());
         preparedStatement.setLong(3, cal.getId());
-        System.out.println("Atualizado M e B com os valores "+ MB.getM() + " " + MB.getB() + " no ID "+cal.getId());
         preparedStatement.executeUpdate();
         boolean atualizouAlgo = preparedStatement.getUpdateCount() > 0;
     	preparedStatement.close();
@@ -115,8 +115,8 @@ public class CalibracaoDAO {
 				
 				calibracao
 				.setPontos(result.getString(2))
-				.setM(result.getInt(3))
-				.setB(result.getInt(4))
+				.setM(result.getFloat(3))
+				.setB(result.getFloat(4))
 				.setDataDeCriacao(result.getTimestamp(6))
 				.setDataDeModificacao(result.getTimestamp(6))
 				.setDesabilitado(result.getInt(7));

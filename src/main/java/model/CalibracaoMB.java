@@ -5,8 +5,8 @@ package model;
 
 public class CalibracaoMB {
 	private String Hash;
-	private int M;
-	private int B;
+	private float M;
+	private float B;
 	
 	
 	public CalibracaoMB() {
@@ -18,16 +18,16 @@ public class CalibracaoMB {
 	public void setHash(String Hash) {
 		this.Hash = Hash;
 	}
-	public int getM() {
+	public float  getM() {
 		return M;
 	}
-	public void setM(int m) {
+	public void setM(float  m) {
 		M = m;
 	}
-	public int getB() {
+	public float  getB() {
 		return B;
 	}
-	public void setB(int b) {
+	public void setB(float  b) {
 		B = b;
 	}
 

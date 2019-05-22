@@ -48,6 +48,8 @@ public class Main {
 		final String PATH_DEL_USER = "/admin/deleteUser/";
 		final String PATH_USER_HISTORY = "/admin/userHistory";
 		final String PATH_USER_NAME = "/client/userName/";
+		final String PATH_USER_ID = "/client/userID/";
+		final String PATH_IS_ADMIN = "/client/isUserAdmin/";
 		
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
@@ -68,6 +70,23 @@ public class Main {
 		
 
 		//User control
+		
+		post(PATH_USER_ID , (request, response)->{
+					
+			TokensControl tokenControl =  new TokensControl();
+			Usuario user = tokenControl.getUsuarioWithToken(request.body());
+			
+			return user.getidUsuario();
+		});
+
+		post(PATH_IS_ADMIN , (request, response)->{
+			
+			TokensControl tokenControl =  new TokensControl();
+			Usuario user = tokenControl.getUsuarioWithToken(request.body());
+			
+			return user.getUsuarioAdmin();
+		});
+
 		
 		post(PATH_USER_NAME , (request, response)->{
 			
@@ -262,8 +281,7 @@ public class Main {
 			Calibracao novaCalibracao = new Calibracao();
 			novaCalibracao.setHashid(calibracao.getHash());
 			boolean resultado = calibracaoDAO.atualizarMB(novaCalibracao, calibracao);
-	
-	
+			
 			
 			return resultado;
 		});
@@ -273,7 +291,6 @@ public class Main {
 			
 			String hashid = request.params(":hash");
 			Calibracao cal = calibracaoDAO.getCalibracao(hashid);
-			System.out.println(cal.getPontos());
 			
 			return cal.toString()+";"+cal.getDesabilitado();
 			
