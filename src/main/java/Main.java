@@ -46,7 +46,8 @@ public class Main {
 		final String PATH_EDIT_USER = "/admin/editUser/";
 		final String PATH_LIST_USERS = "/admin/listUsers/";
 		final String PATH_DEL_USER = "/admin/deleteUser/";
-		final String PATH_USER_AMOSTRAS = "/client/amostraslist";
+		final String PATH_USER_HISTORY = "/admin/userHistory";
+		final String PATH_USER_NAME = "/client/userName/";
 		
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
@@ -57,6 +58,7 @@ public class Main {
 		
 						
 		// Filtros
+		
 		after((request, response) -> {
 			response.header("Access-Control-Allow-Origin", "*");
 			response.header("Access-Control-Allow-Methods", "GET");
@@ -67,6 +69,14 @@ public class Main {
 
 		//User control
 		
+		post(PATH_USER_NAME , (request, response)->{
+			
+			TokensControl tokenControl =  new TokensControl();
+			Usuario user = tokenControl.getUsuarioWithToken(request.body());
+			
+			return user.getNome();
+		});
+		
 		post(PATH_DEL_USER, (request, response)->{
 
 			UsuarioDAO usuariodao =  new UsuarioDAO();
@@ -75,6 +85,7 @@ public class Main {
 		 	
 			return isUserDeleted ;
 		});
+		
 		
 		post(PATH_EDIT_USER, (request, response)->{
 			
@@ -87,6 +98,7 @@ public class Main {
 			
 		});
 		
+		
 		post(PATH_SEARCHLOGIN, (request, response)->{
 					
 			UsuarioDAO usuarioDAO = new UsuarioDAO();
@@ -94,6 +106,7 @@ public class Main {
 			
 			return usuarioDAO.hasThisLoginInDatabase(request.body()) ? false : true ;	
 		});
+		
 		
 		post(PATH_NEW_USER, (request, response)->{
 
@@ -105,12 +118,14 @@ public class Main {
 			return result;	
 		});
 		
+		
 		get(PATH_LIST_USERS, (request, response)->{
 			
 			UsuarioDAO usuariodao = new UsuarioDAO();
 			LinkedList<Usuario> lista = usuariodao.listAllUsers();
 			return lista;
 		});
+		
 		
 		post(PATH_LOGIN, (request, response) -> {
 
@@ -151,7 +166,7 @@ public class Main {
 		});
 
 
-		//Métodos para autenticação de Token e das credenciais de ADM
+		//Tokens control
 		
 		post(PATH_AUTH_TOKEN, (request, response) -> {
 			final String token = request.body();
@@ -159,6 +174,7 @@ public class Main {
 			return tokencontrol.validateToken(token);
 			
 		});
+		
 		
 		post(PATH_AUTH_ADMIN, (request,response)->{
 			final String Token = request.body();
@@ -169,29 +185,21 @@ public class Main {
 		});
 		
 		
-		
 		//amostras control
 				
-				
-		//Get de amostras de cada usuario
-		
-		get(PATH_USER_AMOSTRAS, (request, response)->{
+				 
+		post(PATH_USER_HISTORY, (request, response)->{
 			
-			final String userID =  request.body();
-			
+			Long userID = Long.parseLong(request.body());
+			LinkedList<Calibracao> historicoDoUsuario = new LinkedList<Calibracao>();
 			CalibracaoDAO calibracaodao =  new CalibracaoDAO();
-			
+			historicoDoUsuario = calibracaodao.getHistoricoDoUser(userID);
 			Gson gson = new Gson();
 			
-			Usuario user  = new Usuario();
-			
-//			System.out.println(gson.toJson(calibracaodao.getCalibracoes(userID)));
-			
-			
-			return "";	
+			return gson.toJson(historicoDoUsuario);	
 		});
-			
-		//Get Token and return Hash 		
+				
+		
 		get(PATH_WITH_TOKEN, (req, res) -> {
 			 
 			String token = req.params(":Token");	
@@ -230,8 +238,7 @@ public class Main {
 	        return "";
 	    });
 		
-		
-		//Get pontos e atualiza
+		 
 		post(PATH_HOME_WITH_HASH, (request, response) -> {
 			pontosJsonSchema pontosSchema = new pontosJsonSchema();
 			Boolean resultado = false;
@@ -247,21 +254,21 @@ public class Main {
 
 		});
 				
-			post(PATH_WITH_MB, (request, response)->{
-						
+		
+		post(PATH_WITH_MB, (request, response)->{
+					
 			Gson gson = new Gson();
 			CalibracaoMB calibracao =  gson.fromJson(request.body(), CalibracaoMB.class);
-			
-			
 			Calibracao novaCalibracao = new Calibracao();
 			novaCalibracao.setHashid(calibracao.getHash());
 			boolean resultado = calibracaoDAO.atualizarMB(novaCalibracao, calibracao);
 	
+	
 			
 			return resultado;
-			});
-
-		//Get hash and return pontos + isDesabilitado		
+		});
+  
+		
 		get(PATH_HOME_WITH_HASH, (request, response) -> {
 			
 			String hashid = request.params(":hash");

@@ -40,6 +40,7 @@ public class Calibracao {
     public void setDesabilitado(int desabilitado) {
     	this.desabilitado =  desabilitado;
     }
+    
     public long getId() {
         return id;
     }

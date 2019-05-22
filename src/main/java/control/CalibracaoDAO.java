@@ -1,5 +1,6 @@
 package control;
 import java.sql.*;
+import java.util.LinkedList;
 
 import model.BancoDeDados;
 import model.Calibracao;
@@ -94,6 +95,47 @@ public class CalibracaoDAO {
         }
     }
 
-   
+	public LinkedList<Calibracao> getHistoricoDoUser(Long userID) {
+		
+		String selectAllFromUser = "SELECT * from webcal where id_fk_usuario = ?";
+		Connection connection;
+		
+		try {
+			connection = bd.criarConexao();
+			PreparedStatement preparedStatement = connection.prepareStatement(selectAllFromUser);
+			preparedStatement.setLong(1, userID);			
+			ResultSet result = preparedStatement.executeQuery();
+			LinkedList<Calibracao> historicoDoUsuario = new LinkedList<Calibracao>();
+			
+			while(result.next()) {
+				
+				Calibracao calibracao =  new Calibracao();
+				
+				calibracao.setId(result.getLong(1));
+				
+				calibracao
+				.setPontos(result.getString(2))
+				.setM(result.getInt(3))
+				.setB(result.getInt(4))
+				.setDataDeCriacao(result.getTimestamp(6))
+				.setDataDeModificacao(result.getTimestamp(6))
+				.setDesabilitado(result.getInt(7));
+				
+						
+				historicoDoUsuario.add(calibracao);
+				
+			}
+            preparedStatement.close();
+            
+            return historicoDoUsuario;
+		} catch (ClassNotFoundException | SQLException e) {
+			System.out.println(e.getMessage());
+		}
+        
+		
+		
+	return null;
+	}
+       
 
 }
