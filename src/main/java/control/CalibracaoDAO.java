@@ -94,7 +94,30 @@ public class CalibracaoDAO {
     		return false;
         }
     }
-
+    
+    public boolean deletarHistorico(Long userID) {
+    	
+    	String deleteUserHistory = "DELETE from webcal where id_fk_usuario = ?";
+    	Connection connection;
+    	boolean result = false;
+    	
+    	try {
+			connection = bd.criarConexao();
+			PreparedStatement preparedStatement = connection.prepareStatement(deleteUserHistory);
+			preparedStatement.setLong(1, userID);		
+			preparedStatement.executeUpdate();
+			result = preparedStatement.getUpdateCount() > 0;
+			preparedStatement.close();
+            return result;
+		} catch (ClassNotFoundException | SQLException e) {
+			System.out.println(e.getMessage());
+		}
+        
+		
+		return result;
+    	
+    }
+    
 	public LinkedList<Calibracao> getHistoricoDoUser(Long userID) {
 		
 		String selectAllFromUser = "SELECT * from webcal where id_fk_usuario = ?";

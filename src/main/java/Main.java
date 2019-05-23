@@ -97,10 +97,17 @@ public class Main {
 		});
 		
 		post(PATH_DEL_USER, (request, response)->{
-
+			
 			UsuarioDAO usuariodao =  new UsuarioDAO();
 		 	final long userID = Long.parseLong(request.body());
-		 	boolean isUserDeleted = usuariodao.deletarUsuario(userID);
+		 	boolean isUserDeleted = false;
+		 	
+		 	if(calibracaoDAO.getHistoricoDoUser(userID).size() == 0) {
+		 		isUserDeleted = usuariodao.deletarUsuario(userID);
+		 	}else {
+		 		calibracaoDAO.deletarHistorico(userID);
+	 			isUserDeleted = usuariodao.deletarUsuario(userID);
+			}
 		 	
 			return isUserDeleted ;
 		});
@@ -267,6 +274,7 @@ public class Main {
 				novaCalibracao.setHashid(request.params(":hash"));
 				novaCalibracao.setPontos(request.body());
 				resultado = calibracaoDAO.atualizarCalibracao(novaCalibracao);
+				System.out.println(resultado);
 			}
 
 			return resultado ? "atualizado" : "naoatualizado";
