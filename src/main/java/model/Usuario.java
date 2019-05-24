@@ -12,10 +12,12 @@ public class Usuario {
 	private String login;
 	private int usuarioAdmin;
 	private Date dataDeCriacao;
-	
+	private int qtd_medidores;
 	
 	public Usuario() { 
 	}
+	
+	
 	
 	public Date getdataDeCriacao() {
 		return this.dataDeCriacao;
@@ -64,7 +66,16 @@ public class Usuario {
 		return this;
 	}
 	
+	public int getQuantidadeDeMedidores() {
+		return qtd_medidores;
+	}
 
+
+	public Usuario setQuantidadeDeMedidores(int qtd_medidores) {
+		this.qtd_medidores = qtd_medidores;
+		return this;
+	}
+	
     @Override
     public String toString() {
 
@@ -72,4 +83,6 @@ public class Usuario {
         
     	return gson.toJson(this);
     }
+
+
 }

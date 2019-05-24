@@ -16,10 +16,13 @@ public class UsuarioDAO {
 	private String searchForAllFields = "SELECT * FROM usuarios";
 	private String searchWithLoginAndPassword = searchForAllFields + " WHERE login = ? AND senha = ?";
 	private String searchWithLogin = searchForAllFields + " WHERE login = ?";
-	private String insertNewUser = "INSERT INTO usuarios (nome , senha , login , UsuarioAdmin , data_de_criacao ) VALUES (?,?,?,?,?) ";
+	private String insertNewUser = "INSERT INTO usuarios (nome , senha , login , UsuarioAdmin , "
+			+ "data_de_criacao , qtd_medidores ) VALUES (?,?,?,?,?,?) ";
 	private String selectAllUsers = "SELECT * from usuarios";
-	private String updateUser = "UPDATE `pontos_calibracao`.`usuarios` SET  `nome` = ?,  `senha` = ?,  `login` = ?, `UsuarioAdmin` = ?  WHERE `id_usuario`= ? ;";
+	private String updateUser = "UPDATE `pontos_calibracao`.`usuarios` SET `nome` = ?, `senha` = ?,"
+			+ " `login` = ?, `UsuarioAdmin` = ? , `qtd_medidores` = ?  WHERE `id_usuario`= ? ;";
     private String deleteUserWithId = "DELETE FROM `pontos_calibracao`.`usuarios` WHERE `id_usuario`= ? ";
+    
     
 	PreparedStatement preparedStatement;
 
@@ -84,6 +87,8 @@ public class UsuarioDAO {
 			preparedStatement.setString(3, user.getLogin());
 			preparedStatement.setInt(4, user.getUsuarioAdmin());
 			preparedStatement.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+			preparedStatement.setInt(6, user.getQuantidadeDeMedidores());
+			
 			preparedStatement.executeUpdate();
 	    	
 			if (preparedStatement.getUpdateCount() > 0) {
@@ -119,8 +124,9 @@ public class UsuarioDAO {
 						.setNome(result.getString(2))
 						.setSenha(result.getString(3))
 						.setLogin(result.getString(4))
-						.setUsuarioAdmin(result.getInt(5));
-
+						.setUsuarioAdmin(result.getInt(5))
+						.setQuantidadeDeMedidores(result.getInt(6));
+				
 				return usuarioEncontrado;
 			}
 		} catch (SQLException error) {
@@ -143,7 +149,8 @@ public class UsuarioDAO {
 				.setSenha(result.getString(3))
 				.setLogin(result.getString(4))
 				.setUsuarioAdmin(result.getInt(5))
-				.setdataDeCriacao(result.getTimestamp(6));
+				.setdataDeCriacao(result.getTimestamp(6))
+				.setQuantidadeDeMedidores(result.getInt(7));
 				
 				listaDeUsuarios.add(user);
 			}
@@ -164,16 +171,19 @@ public class UsuarioDAO {
 			preparedStatement.setString(2, user.getSenha());
 			preparedStatement.setString(3, user.getLogin());
 			preparedStatement.setInt(4, user.getUsuarioAdmin());
-			preparedStatement.setLong(5, user.getidUsuario());
+			preparedStatement.setInt(5, user.getQuantidadeDeMedidores());
+			preparedStatement.setLong(6, user.getidUsuario());
+			
 			
 			preparedStatement.executeUpdate();
 			
-	      
 	    	if (preparedStatement.getUpdateCount() > 0) {
-	
+
 		        preparedStatement.close();
 				return true;
 			} else {
+
+		        preparedStatement.close();
 				return false;
 			}
 	

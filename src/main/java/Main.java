@@ -50,6 +50,8 @@ public class Main {
 		final String PATH_USER_NAME = "/client/userName/";
 		final String PATH_USER_ID = "/client/userID/";
 		final String PATH_IS_ADMIN = "/client/isUserAdmin/";
+		final String PATH_GET_HASH = "/client/getHash/";
+		
 		
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
@@ -117,6 +119,7 @@ public class Main {
 			
 			Gson gson = new Gson();
 			Usuario UserInfos = gson.fromJson(request.body(), Usuario.class);
+//			System.out.println(request.body());
 			UsuarioDAO usuariodao =  new UsuarioDAO();
 			boolean isUserAtualized = usuariodao.atualizarUsuario(UserInfos);
 			
@@ -303,6 +306,16 @@ public class Main {
 			return cal.toString()+";"+cal.getDesabilitado();
 			
 		});
+		
+		
+		post(PATH_GET_HASH, (request, response) -> {
+			
+			Calibracao calibracao = new Calibracao();
+			calibracao.setId(Long.parseLong(request.body()));
+			return calibracao.getHashid();
+			
+		});
+		
 		
 		
 
