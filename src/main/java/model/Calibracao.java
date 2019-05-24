@@ -12,8 +12,10 @@ public class Calibracao {
     private int desabilitado;
 	private float M;
 	private float B;
+	private String produtoSelecionado;
+	private String medidor;
 	
-    
+  
 
 	public float getB() {
 		return this.B;
@@ -93,5 +95,23 @@ public class Calibracao {
     public String toString() {
         return pontos == "null" ? "[]" : this.pontos;
     }
+
+	public String getProdutoSelecionado() {
+		return produtoSelecionado;
+	}
+
+	public Calibracao setProdutoSelecionado(String produtoSelecionado) {
+		this.produtoSelecionado = produtoSelecionado;
+		return this;
+	}
+
+	public String getMedidor() {
+		return medidor;
+	}
+
+	public Calibracao setMedidor(String medidor) {
+		this.medidor = medidor;
+		return this;
+	}
 
 }

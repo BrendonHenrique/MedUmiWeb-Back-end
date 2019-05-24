@@ -20,6 +20,7 @@ import control.JsonSchemaValidator;
 import control.TokensControl;
 import model.BancoDeDados;
 import model.Calibracao;
+import model.ConfiguracoesCalibracao;
 import model.CalibracaoMB;
 import model.Usuario; 
 import model.loginJsonSchema;
@@ -51,6 +52,7 @@ public class Main {
 		final String PATH_USER_ID = "/client/userID/";
 		final String PATH_IS_ADMIN = "/client/isUserAdmin/";
 		final String PATH_GET_HASH = "/client/getHash/";
+		final String PATH_SET_CONFIGURACOES = "/client/setConfiguracoes/";
 		
 		
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
@@ -119,7 +121,6 @@ public class Main {
 			
 			Gson gson = new Gson();
 			Usuario UserInfos = gson.fromJson(request.body(), Usuario.class);
-//			System.out.println(request.body());
 			UsuarioDAO usuariodao =  new UsuarioDAO();
 			boolean isUserAtualized = usuariodao.atualizarUsuario(UserInfos);
 			
@@ -216,7 +217,29 @@ public class Main {
 		
 		//amostras control
 				
-				 
+
+		post(PATH_SET_CONFIGURACOES , (request, response)->{
+			Gson gson = new Gson();
+			ConfiguracoesCalibracao configuracoes =  gson.fromJson(request.body(), ConfiguracoesCalibracao.class);
+			Calibracao calibracao = new Calibracao();
+			calibracao.setHashid(configuracoes.getHash());
+			
+			boolean result = calibracaoDAO.setConfiguracoes(calibracao , configuracoes);
+			
+			return result;
+		});
+
+		get(PATH_HOME_WITH_HASH, (request, response) -> {
+			
+			String hashid = request.params(":hash");
+			Calibracao cal = calibracaoDAO.getCalibracao(hashid);
+			
+			System.out.println(cal.toString()+";"+cal.getDesabilitado()+";"+cal.getMedidor()+";"+cal.getProdutoSelecionado());
+			
+			return cal.toString()+";"+cal.getDesabilitado()+";"+cal.getMedidor()+";"+cal.getProdutoSelecionado();
+			
+		});
+		
 		post(PATH_USER_HISTORY, (request, response)->{
 			
 			Long userID = Long.parseLong(request.body());
@@ -297,15 +320,6 @@ public class Main {
 			return resultado;
 		});
   
-		
-		get(PATH_HOME_WITH_HASH, (request, response) -> {
-			
-			String hashid = request.params(":hash");
-			Calibracao cal = calibracaoDAO.getCalibracao(hashid);
-			
-			return cal.toString()+";"+cal.getDesabilitado();
-			
-		});
 		
 		
 		post(PATH_GET_HASH, (request, response) -> {

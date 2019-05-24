@@ -12,7 +12,6 @@ public class Usuario {
 	private String login;
 	private int usuarioAdmin;
 	private Date dataDeCriacao;
-	private int qtd_medidores;
 	
 	public Usuario() { 
 	}
@@ -65,17 +64,7 @@ public class Usuario {
 		this.login = login;
 		return this;
 	}
-	
-	public int getQuantidadeDeMedidores() {
-		return qtd_medidores;
-	}
-
-
-	public Usuario setQuantidadeDeMedidores(int qtd_medidores) {
-		this.qtd_medidores = qtd_medidores;
-		return this;
-	}
-	
+		
     @Override
     public String toString() {
 

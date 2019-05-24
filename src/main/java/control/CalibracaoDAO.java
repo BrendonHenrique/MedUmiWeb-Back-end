@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import model.BancoDeDados;
 import model.Calibracao;
 import model.CalibracaoMB;
+import model.ConfiguracoesCalibracao;
 
 public class CalibracaoDAO {
     private Connection con = null;
@@ -30,7 +31,7 @@ public class CalibracaoDAO {
         Calibracao cal = new Calibracao();
         cal.setHashid(hashid);
 		
-        String selectHash = "SELECT id, pontos, data_de_criacao, data_de_modificacao, desabilitado FROM webcal where id = ?";
+        String selectHash = "SELECT id, pontos, data_de_criacao, data_de_modificacao, desabilitado , produto , medidor FROM webcal where id = ?";
 
         PreparedStatement preparedStatement = null;
         try {
@@ -44,6 +45,11 @@ public class CalibracaoDAO {
             .setDataDeCriacao(rs.getDate(3))
             .setDataDeModificacao(rs.getDate(4))
             .setDesabilitado(rs.getInt(5));
+            
+            cal.setProdutoSelecionado(rs.getString(6));
+            cal.setMedidor(rs.getString(7));
+            
+            
 
             preparedStatement.close();
             
@@ -77,7 +83,6 @@ public class CalibracaoDAO {
     public Boolean atualizarMB(Calibracao cal, CalibracaoMB MB) throws ClassNotFoundException, SQLException {
       
         String update = "UPDATE webcal SET M = ?, B = ? WHERE id = ? ";
-        System.out.println(MB.toString());
         Connection connection = bd.criarConexao();
         PreparedStatement preparedStatement = connection.prepareStatement(update);
         preparedStatement.setFloat(1, MB.getM());
@@ -94,6 +99,7 @@ public class CalibracaoDAO {
     		return false;
         }
     }
+    
     
     public boolean deletarHistorico(Long userID) {
     	
@@ -140,9 +146,12 @@ public class CalibracaoDAO {
 				.setPontos(result.getString(2))
 				.setM(result.getFloat(3))
 				.setB(result.getFloat(4))
-				.setDataDeCriacao(result.getTimestamp(6))
+				.setDataDeCriacao(result.getTimestamp(5))
 				.setDataDeModificacao(result.getTimestamp(6))
-				.setDesabilitado(result.getInt(7));
+				.setDesabilitado(result.getInt(8));
+
+				calibracao.setProdutoSelecionado(result.getString(9));
+				calibracao.setMedidor(result.getString(10));
 				
 						
 				historicoDoUsuario.add(calibracao);
@@ -158,6 +167,42 @@ public class CalibracaoDAO {
 		
 		
 	return null;
+	}
+
+	public boolean setConfiguracoes(Calibracao calibracao , ConfiguracoesCalibracao configuracoes) {
+		
+		try {
+    		String updateConfiguracoes = "UPDATE webcal SET medidor = ? , produto = ?  WHERE id = ? ";
+            Connection connection = bd.criarConexao();
+            PreparedStatement preparedStatement = connection.prepareStatement(updateConfiguracoes);
+            
+            preparedStatement.setString(1, configuracoes.getMedidor());
+            preparedStatement.setString(2, configuracoes.getProdutoSelecionado());
+            preparedStatement.setLong(3, calibracao.getId());
+            
+            preparedStatement.executeUpdate();
+            
+            boolean atualizouAlgo = preparedStatement.getUpdateCount() > 0;
+        	preparedStatement.close();
+            bd.fecharConexao(connection);
+            
+            System.out.println("Id "+calibracao.getId());
+            System.out.println("medidor "+configuracoes.getMedidor());
+            System.out.println("produto "+configuracoes.getProdutoSelecionado());
+            System.out.println(atualizouAlgo);
+            
+            if(atualizouAlgo) {
+            	return true;
+            }else {
+        		return false;
+            }
+            
+    	}catch(Exception e) {
+    		System.out.println(e.getMessage());
+    		return false;
+    	}
+    	
+		
 	}
        
 
