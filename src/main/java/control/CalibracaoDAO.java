@@ -31,7 +31,8 @@ public class CalibracaoDAO {
         Calibracao cal = new Calibracao();
         cal.setHashid(hashid);
 		
-        String selectHash = "SELECT id, pontos, data_de_criacao, data_de_modificacao, desabilitado , produto , medidor FROM webcal where id = ?";
+        String selectHash = "SELECT id, pontos, data_de_criacao, data_de_modificacao, desabilitado , produto "
+        		+ ", medidor , M , B FROM webcal where id = ?";
 
         PreparedStatement preparedStatement = null;
         try {
@@ -48,6 +49,8 @@ public class CalibracaoDAO {
             
             cal.setProdutoSelecionado(rs.getString(6));
             cal.setMedidor(rs.getString(7));
+            cal.setM(rs.getFloat(8));
+        	cal.setB(rs.getFloat(9));
             
             
 

@@ -229,14 +229,26 @@ public class Main {
 			return result;
 		});
 
+
+		post(PATH_WITH_MB, (request, response)->{
+					
+			Gson gson = new Gson();
+			CalibracaoMB calibracao =  gson.fromJson(request.body(), CalibracaoMB.class);
+			Calibracao novaCalibracao = new Calibracao();
+			novaCalibracao.setHashid(calibracao.getHash());
+			boolean resultado = calibracaoDAO.atualizarMB(novaCalibracao, calibracao);
+			
+			
+			return resultado;
+		});
+  
+		
+		
 		get(PATH_HOME_WITH_HASH, (request, response) -> {
 			
 			String hashid = request.params(":hash");
 			Calibracao cal = calibracaoDAO.getCalibracao(hashid);
-			
-			System.out.println(cal.toString()+";"+cal.getDesabilitado()+";"+cal.getMedidor()+";"+cal.getProdutoSelecionado());
-			
-			return cal.toString()+";"+cal.getDesabilitado()+";"+cal.getMedidor()+";"+cal.getProdutoSelecionado();
+			return cal.toString();
 			
 		});
 		
@@ -307,19 +319,6 @@ public class Main {
 
 		});
 				
-		
-		post(PATH_WITH_MB, (request, response)->{
-					
-			Gson gson = new Gson();
-			CalibracaoMB calibracao =  gson.fromJson(request.body(), CalibracaoMB.class);
-			Calibracao novaCalibracao = new Calibracao();
-			novaCalibracao.setHashid(calibracao.getHash());
-			boolean resultado = calibracaoDAO.atualizarMB(novaCalibracao, calibracao);
-			
-			
-			return resultado;
-		});
-  
 		
 		
 		post(PATH_GET_HASH, (request, response) -> {

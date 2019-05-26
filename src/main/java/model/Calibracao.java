@@ -1,6 +1,8 @@
 package model;
 import org.hashids.Hashids;
 
+import com.google.gson.Gson;
+
 import java.util.Date;
 
 public class Calibracao {
@@ -91,9 +93,19 @@ public class Calibracao {
     	return CRIADOR_DE_HASHID.decode(hashid)[0];
     }
 
+//    @Override
+//    public String toString() {
+//        return pontos == "null" ? "[]" : this.pontos;
+//    }
+//
+
+	
     @Override
     public String toString() {
-        return pontos == "null" ? "[]" : this.pontos;
+
+        Gson gson = new Gson();
+        
+    	return gson.toJson(this);
     }
 
 	public String getProdutoSelecionado() {
