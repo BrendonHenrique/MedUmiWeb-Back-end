@@ -58,7 +58,7 @@ public class Main {
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
 		
-		port(8081);
+		port(8080);
 		staticFiles.location(ArquivosEstaticos);
 		BancoDeDadosWebcal.inicializarBancoDeDados();
 		
