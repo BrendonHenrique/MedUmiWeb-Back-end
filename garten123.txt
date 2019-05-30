@@ -1,0 +1,39 @@
+--- Técnico -----
+Width nas imagens do carousel para não quebrar o layout 
+botão sair com padding para centralizar o ícone 
+ícone de logout no menu em vermelho
+ícone no menu com tittle 
+verificação de session e/ou token na tela de login
+remover history 
+
+
+
+
+[x] Menu:
+Esse é o menu da aplicação. Clique nele e você poderá acessar seu histórico, página de calibração e fazer logout.
+(pontuação e vírgula colada na palavra anterior)
+
+[x] Histórico:
+No seu histórico você terá acesso a uma tabela com todas as informações sobre as calibrações realizadas.
+
+[x] Calibração:
+Esta página é utilizada para realizar a calibração do medidor de umidade.
+
+
+PDF:
+Colocar o logo da Garten e alguns cabeçalhos -> Curva de calibração; Valores de calibração utilizados; tabela de comparação
+
+
+CALIBRAÇÕES:
+Campos para colocar o M e o B  devem estar mais aparentes para o operador colocar.
+
+
+CRIAR USUÁRIO:
+Só pode criar usuário e nao admin. Os admins já deixa pre configurado.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+"FRESCURAS"
+[x] Logo girando na transição
+Dar um layout mais padrão Garten (falar com Maria Benita)
+Dar possibilidade do usuário trocar imagem (admin também pode trocar)
+Botão para voltar para tela inicial

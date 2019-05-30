@@ -1,0 +1,13 @@
+model/ConfiguracoesCalibracao.class
+model/Usuario.class
+control/TokensControl.class
+model/ApiSchema.class
+model/loginJsonSchema.class
+model/Calibracao.class
+model/pontosJsonSchema.class
+webmedumi/WebMedUmi.class
+control/CalibracaoDAO.class
+control/JsonSchemaValidator.class
+control/UsuarioDAO.class
+model/BancoDeDados.class
+model/CalibracaoMB.class
