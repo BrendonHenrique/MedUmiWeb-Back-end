@@ -93,13 +93,6 @@ public class Calibracao {
     	return CRIADOR_DE_HASHID.decode(hashid)[0];
     }
 
-//    @Override
-//    public String toString() {
-//        return pontos == "null" ? "[]" : this.pontos;
-//    }
-//
-
-	
     @Override
     public String toString() {
 

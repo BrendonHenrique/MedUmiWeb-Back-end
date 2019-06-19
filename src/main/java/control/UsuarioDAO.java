@@ -19,9 +19,9 @@ public class UsuarioDAO {
 	private String insertNewUser = "INSERT INTO usuarios (nome , senha , login , UsuarioAdmin , "
 			+ "data_de_criacao ) VALUES (?,?,?,?,?) ";
 	private String selectAllUsers = "SELECT * from usuarios";
-	private String updateUser = "UPDATE `pontos_calibracao`.`usuarios` SET `nome` = ?, `senha` = ?,"
+	private String updateUser = "UPDATE `usuarios` SET `nome` = ?, `senha` = ?,"
 			+ " `login` = ?, `UsuarioAdmin` = ?   WHERE `id_usuario`= ? ;";
-    private String deleteUserWithId = "DELETE FROM `pontos_calibracao`.`usuarios` WHERE `id_usuario`= ? ";
+    private String deleteUserWithId = "DELETE FROM `usuarios` WHERE `id_usuario`= ? ";
     
     
 	PreparedStatement preparedStatement;

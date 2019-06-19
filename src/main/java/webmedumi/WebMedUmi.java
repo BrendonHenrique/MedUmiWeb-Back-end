@@ -48,7 +48,7 @@ public class WebMedUmi implements SparkApplication {
 		final String PATH_EDIT_USER = "/admin/editUser/";
 		final String PATH_LIST_USERS = "/admin/listUsers/";
 		final String PATH_DEL_USER = "/admin/deleteUser/";
-		final String PATH_USER_HISTORY = "/admin/userHistory";
+		final String PATH_USER_HISTORIC = "/admin/userHistory";
 		final String PATH_USER_NAME = "/client/userName/";
 		final String PATH_USER_ID = "/client/userID/";
 		final String PATH_IS_ADMIN = "/client/isUserAdmin/";
@@ -58,8 +58,6 @@ public class WebMedUmi implements SparkApplication {
 		
 		BancoDeDados BancoDeDadosWebcal = new BancoDeDados();
 		CalibracaoDAO calibracaoDAO = new CalibracaoDAO();
-		
-		//port(8081);
 		staticFiles.location(ArquivosEstaticos);
 		BancoDeDadosWebcal.inicializarBancoDeDados();
 		
@@ -73,7 +71,12 @@ public class WebMedUmi implements SparkApplication {
 			return;
 		});
 		
-
+		get("/test" , (request,response) ->{
+			
+			return "ok";
+			
+		});
+		
 		//User control
 		
 		post(PATH_USER_ID , (request, response)->{
@@ -103,6 +106,8 @@ public class WebMedUmi implements SparkApplication {
 		
 		post(PATH_DEL_USER, (request, response)->{
 			
+
+			System.out.println(request.body());
 			UsuarioDAO usuariodao =  new UsuarioDAO();
 		 	final long userID = Long.parseLong(request.body());
 		 	boolean isUserDeleted = false;
@@ -120,6 +125,7 @@ public class WebMedUmi implements SparkApplication {
 		
 		post(PATH_EDIT_USER, (request, response)->{
 			
+			System.out.println(request.body());
 			Gson gson = new Gson();
 			Usuario UserInfos = gson.fromJson(request.body(), Usuario.class);
 			UsuarioDAO usuariodao =  new UsuarioDAO();
@@ -253,7 +259,7 @@ public class WebMedUmi implements SparkApplication {
 			
 		});
 		
-		post(PATH_USER_HISTORY, (request, response)->{
+		post(PATH_USER_HISTORIC, (request, response)->{
 			
 			Long userID = Long.parseLong(request.body());
 			LinkedList<Calibracao> historicoDoUsuario = new LinkedList<Calibracao>();

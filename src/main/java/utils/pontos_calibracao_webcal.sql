@@ -24,10 +24,12 @@ DROP TABLE IF EXISTS `webcal`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `webcal` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `pontos` json NOT NULL,
-  `data_de_criacao` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `data_de_modificacao` datetime NOT NULL,
-  `id_fk_usuario` int(11) NOT NULL,
+  `pontos` json,
+  `M` float  DEFAULT NULL,
+  `B` float  DEFAULT NULL,
+  `data_de_criacao` timestamp  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `data_de_modificacao` datetime  DEFAULT CURRENT_TIMESTAMP ,
+  `id_fk_usuario` int(11) ,
   PRIMARY KEY (`id`),
   KEY `idx_webcal_data_de_modificacao` (`data_de_modificacao`),
   KEY `id_fk_usuario` (`id_fk_usuario`),

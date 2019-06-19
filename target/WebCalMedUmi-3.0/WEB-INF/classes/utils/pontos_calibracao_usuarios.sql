@@ -28,6 +28,7 @@ CREATE TABLE `usuarios` (
   `senha` varchar(30) NOT NULL,
   `login` varchar(30) NOT NULL,
   `UsuarioAdmin` tinyint(1) NOT NULL,
+  `data_de_criacao` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
   PRIMARY KEY (`id_usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
