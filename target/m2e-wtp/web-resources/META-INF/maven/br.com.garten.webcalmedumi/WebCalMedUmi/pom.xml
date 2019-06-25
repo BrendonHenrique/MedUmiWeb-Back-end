@@ -4,7 +4,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	
-	<name>medumiweb</name>
+	<name>Webcalmedumi</name>
 	<groupId>br.com.garten.webcalmedumi</groupId>
 	<artifactId>WebCalMedUmi</artifactId>
 	<version>3.0</version>
@@ -58,7 +58,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-	 <finalName>medumiweb</finalName>
+	 <finalName>webcalmedumi</finalName>
 	 	<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -1,0 +1,41 @@
+[{
+    "x": "12",
+    "y": "230",
+    "habilitado": true,
+    "xReajustado": 12
+}, {
+    "x": "011",
+    "y": "022",
+    "habilitado": true,
+    "xReajustado": 11
+}, {
+    "x": "12",
+    "y": "023",
+    "habilitado": true,
+    "xReajustado": 12
+}, {
+    "x": "2",
+    "y": "3",
+    "habilitado": true,
+    "xReajustado": 2
+}, {
+    "x": "12",
+    "y": "32",
+    "habilitado": true,
+    "xReajustado": 12
+}, {
+    "x": "1",
+    "y": "2",
+    "habilitado": true,
+    "xReajustado": 1
+}, {
+    "x": "22",
+    "y": "33",
+    "habilitado": true,
+    "xReajustado": 22
+}, {
+    "x": "12",
+    "y": "23",
+    "habilitado": true,
+    "xReajustado": 12
+}]

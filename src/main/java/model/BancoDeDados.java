@@ -11,9 +11,9 @@ public class BancoDeDados {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection conn = null;
 //Desenvolvimento 
-		// conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pontos_calibracao", "root", "1234");
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/pontos_calibracao", "root", "1234");
 //Producao		
-		conn = DriverManager.getConnection("jdbc:mysql://10.0.0.29:3306/webcal", "garten", "g4rt3n123#");
+		// conn = DriverManager.getConnection("jdbc:mysql://10.0.0.29:3306/webcal", "garten", "g4rt3n123#");
 		return conn;
 	}
 

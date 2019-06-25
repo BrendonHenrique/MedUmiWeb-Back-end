@@ -14,8 +14,8 @@ public class UsuarioDAO {
 	private Connection con = null;
 	private BancoDeDados bd = null;
 	private String searchForAllFields = "SELECT * FROM usuarios";
-	private String searchWithLoginAndPassword = searchForAllFields + " WHERE login = ? AND senha = ?";
-	private String searchWithLogin = searchForAllFields + " WHERE login = ?";
+	private String searchWithLoginAndPassword = searchForAllFields + " WHERE BINARY login = ? AND BINARY senha = ?";
+	private String searchWithLogin = searchForAllFields + " WHERE BINARY login = ?";
 	private String insertNewUser = "INSERT INTO usuarios (nome , senha , login , UsuarioAdmin , "
 			+ "data_de_criacao ) VALUES (?,?,?,?,?) ";
 	private String selectAllUsers = "SELECT * from usuarios";
