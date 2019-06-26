@@ -24,16 +24,16 @@ import model.pontosJsonSchema;
 import spark.servlet.SparkApplication;
 
 /**
- * @version 3.0
- * @author Brendon H.S.S
- */
+* @version 3.0
+* @author Brendon H.S.S
+*/
 
 public class Webcalmedumi implements SparkApplication {
-
-
+	
+	
 	public Webcalmedumi() {}
-		
-		
+	
+	
 	public void init() {
 		
 		final String ArquivosEstaticos = "/public";
@@ -61,7 +61,7 @@ public class Webcalmedumi implements SparkApplication {
 		staticFiles.location(ArquivosEstaticos);
 		BancoDeDadosWebcal.inicializarBancoDeDados();
 		
-						
+		
 		// Filtros
 		
 		after((request, response) -> {
@@ -80,13 +80,13 @@ public class Webcalmedumi implements SparkApplication {
 		//User control
 		
 		post(PATH_USER_ID , (request, response)->{
-					
+			
 			TokensControl tokenControl =  new TokensControl();
 			Usuario user = tokenControl.getUsuarioWithToken(request.body());
 			
 			return user.getidUsuario();
 		});
-
+		
 		post(PATH_IS_ADMIN , (request, response)->{
 			
 			TokensControl tokenControl =  new TokensControl();
@@ -94,7 +94,7 @@ public class Webcalmedumi implements SparkApplication {
 			
 			return user.getUsuarioAdmin();
 		});
-
+		
 		
 		post(PATH_USER_NAME , (request, response)->{
 			
@@ -106,19 +106,19 @@ public class Webcalmedumi implements SparkApplication {
 		
 		post(PATH_DEL_USER, (request, response)->{
 			
-
+			
 			System.out.println(request.body());
 			UsuarioDAO usuariodao =  new UsuarioDAO();
-		 	final long userID = Long.parseLong(request.body());
-		 	boolean isUserDeleted = false;
-		 	
-		 	if(calibracaoDAO.getHistoricoDoUser(userID).size() == 0) {
-		 		isUserDeleted = usuariodao.deletarUsuario(userID);
-		 	}else {
-		 		calibracaoDAO.deletarHistorico(userID);
-	 			isUserDeleted = usuariodao.deletarUsuario(userID);
+			final long userID = Long.parseLong(request.body());
+			boolean isUserDeleted = false;
+			
+			if(calibracaoDAO.getHistoricoDoUser(userID).size() == 0) {
+				isUserDeleted = usuariodao.deletarUsuario(userID);
+			}else {
+				calibracaoDAO.deletarHistorico(userID);
+				isUserDeleted = usuariodao.deletarUsuario(userID);
 			}
-		 	
+			
 			return isUserDeleted ;
 		});
 		
@@ -137,7 +137,7 @@ public class Webcalmedumi implements SparkApplication {
 		
 		
 		post(PATH_SEARCHLOGIN, (request, response)->{
-					
+			
 			UsuarioDAO usuarioDAO = new UsuarioDAO();
 			usuarioDAO.hasThisLoginInDatabase(request.body());
 			
@@ -146,7 +146,7 @@ public class Webcalmedumi implements SparkApplication {
 		
 		
 		post(PATH_NEW_USER, (request, response)->{
-
+			
 			Gson gson = new Gson();
 			Usuario user = gson.fromJson(request.body(), Usuario.class);
 			UsuarioDAO usuariodao = new UsuarioDAO();
@@ -165,47 +165,41 @@ public class Webcalmedumi implements SparkApplication {
 		
 		
 		post(PATH_LOGIN, (request, response) -> {
-
+			
 			response.type("application/json");
 			loginJsonSchema loginSchema = new loginJsonSchema();
 			UsuarioDAO usuarioDAO = new UsuarioDAO();
-
+			
 			if (JsonSchemaValidator.isJsonValid(loginSchema.getSchema(), request.body())) {
 				
 				Gson gson = new Gson();
 				
 				Usuario userWithInputedLoginAndPassword = gson.fromJson(request.body(), Usuario.class);
-				
 				Usuario userFoundedInDatabase = usuarioDAO.searchUserInDatabase(
-						userWithInputedLoginAndPassword.getLogin(),
-						userWithInputedLoginAndPassword.getSenha());
-
-				if (userFoundedInDatabase.getLogin() == null && userFoundedInDatabase.getSenha() == null) {
-
-					return usuarioDAO.validateLoginAndPassword(userWithInputedLoginAndPassword.getLogin());
-
-				} else if (userFoundedInDatabase.getLogin().equals(userWithInputedLoginAndPassword.getLogin())
-					&& userFoundedInDatabase.getSenha().equals(userWithInputedLoginAndPassword.getSenha())) {
+				userWithInputedLoginAndPassword.getLogin(),
+				userWithInputedLoginAndPassword.getSenha());
+				if (userFoundedInDatabase == null) {
 					
-					
-					TokensControl geradorDeTokens = new TokensControl();
-					final long ONEDAYTIMEINMILLIS = 1000 * 60 * 60 * 24;
-					final String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, userFoundedInDatabase);
-
-					response.header("Authorization", "Bearer " + Token);
-					
-					
-					return "Login e senha corretos:" + Token + ":" + userFoundedInDatabase.getUsuarioAdmin();
-				}
-			} else {
-				return "Json incorreto";
-			}
-
-			usuarioDAO.fecharConexao();
-			return request;
+					String msg = usuarioDAO.validateLoginAndPassword(userWithInputedLoginAndPassword.getLogin());
+					usuarioDAO.fecharConexao();
+					response.status(401);
+					return msg;
+				} 
+				
+				usuarioDAO.fecharConexao();
+				TokensControl geradorDeTokens = new TokensControl();
+				final long ONEDAYTIMEINMILLIS = 1000 * 60 * 60 * 24;
+				final String Token = geradorDeTokens.getToken(ONEDAYTIMEINMILLIS, userFoundedInDatabase);
+				
+				response.header("Authorization", "Bearer " + Token);
+				return "Login e senha corretos:" + Token + ":" + userFoundedInDatabase.getUsuarioAdmin();
+			} 
+			response.status(400);
+			return "ERRO";
+			
 		});
-
-
+		
+		
 		//Tokens control
 		
 		post(PATH_AUTH_TOKEN, (request, response) -> {
@@ -226,8 +220,8 @@ public class Webcalmedumi implements SparkApplication {
 		
 		
 		//amostras control
-				
-
+		
+		
 		post(PATH_SET_CONFIGURACOES , (request, response)->{
 			Gson gson = new Gson();
 			ConfiguracoesCalibracao configuracoes =  gson.fromJson(request.body(), ConfiguracoesCalibracao.class);
@@ -238,10 +232,10 @@ public class Webcalmedumi implements SparkApplication {
 			
 			return result;
 		});
-
-
+		
+		
 		post(PATH_WITH_MB, (request, response)->{
-					
+			
 			Gson gson = new Gson();
 			CalibracaoMB calibracao =  gson.fromJson(request.body(), CalibracaoMB.class);
 			Calibracao novaCalibracao = new Calibracao();
@@ -251,7 +245,7 @@ public class Webcalmedumi implements SparkApplication {
 			
 			return resultado;
 		});
-  
+		
 		
 		
 		get(PATH_HOME_WITH_HASH, (request, response) -> {
@@ -272,10 +266,10 @@ public class Webcalmedumi implements SparkApplication {
 			
 			return gson.toJson(historicoDoUsuario);	
 		});
-				
+		
 		
 		get(PATH_WITH_TOKEN, (req, res) -> {
-			 
+			
 			String token = req.params(":Token");	
 			TokensControl tokencontrol = new TokensControl();
 			Usuario user = tokencontrol.getUsuarioWithToken(token);
@@ -293,30 +287,30 @@ public class Webcalmedumi implements SparkApplication {
 				int idGerado = generatedKeys.getInt(1);
 				Calibracao novoCalibracao = new Calibracao();
 				novoCalibracao.setId(idGerado);
-			    statement.close();
+				statement.close();
 				
 				String insertUserIdIntoWebcalTable = "UPDATE webcal SET id_fk_usuario = ?, desabilitado = ?  WHERE id = ? ";
 				preparedStatement = connection.prepareStatement(insertUserIdIntoWebcalTable);
 				preparedStatement.setLong(1, user.getidUsuario());
 				preparedStatement.setInt(2, 1);
 				preparedStatement.setLong(3, novoCalibracao.getId());
-		        preparedStatement.executeUpdate();
-		        
-		        if(preparedStatement.getUpdateCount() > 0) {
-			        preparedStatement.close();
+				preparedStatement.executeUpdate();
+				
+				if(preparedStatement.getUpdateCount() > 0) {
+					preparedStatement.close();
 					BancoDeDadosWebcal.fecharConexao(connection);
 					return novoCalibracao.getHashid();
-		        }
+				}
 			}
 			
-	        return "";
-	    });
+			return "";
+		});
 		
-		 
+		
 		post(PATH_HOME_WITH_HASH, (request, response) -> {
 			pontosJsonSchema pontosSchema = new pontosJsonSchema();
 			Boolean resultado = false;
-
+			
 			if (JsonSchemaValidator.isJsonValid(pontosSchema.getSchema(), request.body())) {
 				Calibracao novaCalibracao = new Calibracao();
 				novaCalibracao.setHashid(request.params(":hash"));
@@ -324,11 +318,11 @@ public class Webcalmedumi implements SparkApplication {
 				resultado = calibracaoDAO.atualizarCalibracao(novaCalibracao);
 				System.out.println(resultado);
 			}
-
-			return resultado ? "atualizado" : "naoatualizado";
-
-		});
 			
+			return resultado ? "atualizado" : "naoatualizado";
+			
+		});
+		
 		
 		post(PATH_GET_HASH, (request, response) -> {
 			

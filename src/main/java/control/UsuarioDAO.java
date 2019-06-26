@@ -14,8 +14,8 @@ public class UsuarioDAO {
 	private Connection con = null;
 	private BancoDeDados bd = null;
 	private String searchForAllFields = "SELECT * FROM usuarios";
-	private String searchWithLoginAndPassword = searchForAllFields + " WHERE BINARY login = ? AND BINARY senha = ?";
-	private String searchWithLogin = searchForAllFields + " WHERE BINARY login = ?";
+	private String searchWithLoginAndPassword = searchForAllFields + " WHERE login = ? AND BINARY senha = ?";
+	private String searchWithLogin = searchForAllFields + " WHERE login = ?";
 	private String insertNewUser = "INSERT INTO usuarios (nome , senha , login , UsuarioAdmin , "
 			+ "data_de_criacao ) VALUES (?,?,?,?,?) ";
 	private String selectAllUsers = "SELECT * from usuarios";
@@ -114,11 +114,7 @@ public class UsuarioDAO {
 			preparedStatement.setString(2, senha);
 			ResultSet result = preparedStatement.executeQuery();
 
-			if (!result.isBeforeFirst()) {
-				return new Usuario();
-			} else {
-
-				result.next();
+			if (result.first()) {
 				Usuario usuarioEncontrado = new Usuario()
 						.setidUsuario(result.getLong(1))
 						.setNome(result.getString(2))
@@ -127,6 +123,9 @@ public class UsuarioDAO {
 						.setUsuarioAdmin(result.getInt(5));
 				
 				return usuarioEncontrado;
+				
+			} else {
+				return null;
 			}
 		} catch (SQLException error) {
 			System.out.println(error.getMessage());
